@@ -1,0 +1,46 @@
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    compileSdkVersion 32
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 32
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    buildFeatures {
+        viewBinding true
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'com.google.android.material:material:1.6.1'
+    implementation 'com.google.android.flexbox:flexbox:3.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+    api project(path: ':uikit')
+    api project(path: ':signaling_plugin')
+    api 'com.guolindev.permissionx:permissionx:1.6.4'
+
+    
+}
