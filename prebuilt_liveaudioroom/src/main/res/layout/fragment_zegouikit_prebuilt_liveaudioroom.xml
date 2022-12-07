@@ -82,4 +82,15 @@
     android:layout_height="wrap_content"
     app:layout_constraintBottom_toBottomOf="parent" />
 
+  <TextView
+    android:id="@+id/live_toast"
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    android:gravity="center"
+    android:paddingStart="12dp"
+    android:visibility="gone"
+    android:paddingEnd="12dp"
+    android:textColor="@android:color/white"
+    android:textSize="14sp"
+    app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

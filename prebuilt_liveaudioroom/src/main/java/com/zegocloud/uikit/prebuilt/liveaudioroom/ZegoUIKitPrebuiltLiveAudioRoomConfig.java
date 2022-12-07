@@ -35,8 +35,8 @@ public class ZegoUIKitPrebuiltLiveAudioRoomConfig {
         config.role = ZegoLiveAudioRoomRole.HOST;
         config.takeSeatIndexWhenJoining = 0;
         config.turnOnMicrophoneWhenJoining = true;
-        config.confirmDialogInfo = new ZegoDialogInfo("Stop the live", "Are you sure to stop the live?", "Cancel",
-            "Stop it");
+        config.confirmDialogInfo = new ZegoDialogInfo("Leave the room", "Are you sure to leave the room?", "Cancel",
+            "OK");
         return config;
     }
 

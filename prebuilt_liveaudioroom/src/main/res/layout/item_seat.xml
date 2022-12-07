@@ -1,18 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
-  android:id="@+id/cl_seat"
-  android:layout_width="74dp"
-  android:layout_height="74dp">
+  android:layout_width="80dp"
+  android:layout_height="80dp">
 
-  <ImageView
-    android:id="@+id/seat_empty"
-    android:layout_width="54dp"
-    android:layout_height="54dp"
-    android:scaleType="center"
-    android:src="@drawable/audioroom_icon_on_stage"
-    app:layout_constraintLeft_toLeftOf="parent"
-    app:layout_constraintRight_toRightOf="parent"
+  <FrameLayout
+    android:id="@+id/seat_avatar_content_empty"
+    android:layout_width="66dp"
+    android:layout_height="66dp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
+
+    <ImageView
+      android:layout_width="54dp"
+      android:layout_height="54dp"
+      android:layout_gravity="center"
+      android:scaleType="center"
+      android:src="@drawable/audioroom_icon_on_stage"
+      app:layout_constraintLeft_toLeftOf="parent"
+      app:layout_constraintRight_toRightOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
+  </FrameLayout>
+
+  <FrameLayout
+    android:id="@+id/seat_audiovideo_place_holder"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

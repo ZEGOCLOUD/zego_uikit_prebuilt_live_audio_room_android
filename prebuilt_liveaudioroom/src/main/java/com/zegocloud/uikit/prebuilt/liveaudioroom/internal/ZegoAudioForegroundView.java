@@ -2,25 +2,25 @@ package com.zegocloud.uikit.prebuilt.liveaudioroom.internal;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.zegocloud.uikit.ZegoUIKit;
-import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoLiveAudioRoomRole;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.databinding.LayoutSeatForegroundBinding;
-import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.LiveAudioRoomManager.RoleChangedListener;
+import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.RoleService.RoleChangedListener;
 import com.zegocloud.uikit.service.defines.ZegoMicrophoneStateChangeListener;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 import java.util.Objects;
 
 public class ZegoAudioForegroundView extends FrameLayout {
 
-    private ZegoMicrophoneStateChangeListener microphoneStateChangeListener;
     private LayoutSeatForegroundBinding binding;
     private ZegoUIKitUser userInfo;
     private RoleChangedListener roleChangedListener;
+    private ZegoMicrophoneStateChangeListener microphoneStateChangeListener;
 
     public ZegoAudioForegroundView(@NonNull Context context, ZegoUIKitUser userInfo) {
         super(context);
@@ -38,27 +38,23 @@ public class ZegoAudioForegroundView extends FrameLayout {
         initView();
     }
 
+    private static final String TAG = "ZegoAudioForegroundView";
+
     private void initView() {
         binding = LayoutSeatForegroundBinding.inflate(LayoutInflater.from(getContext()), this, true);
         setUserInfo(userInfo);
-        microphoneStateChangeListener = new ZegoMicrophoneStateChangeListener() {
-            @Override
-            public void onMicrophoneOn(ZegoUIKitUser uiKitUser, boolean isOn) {
-                if (Objects.equals(uiKitUser, userInfo)) {
-                    if (isOn) {
-                        showMicrophone(false);
-                    } else {
-                        showMicrophone(true);
-                    }
-                }
+        roleChangedListener = (userID, after) -> {
+            Log.d(TAG,
+                "ZegoAudioForegroundView onRoleChanged() called with: userID = [" + userID + "], after = [" + after
+                    + "],userInfo.userID:" + userInfo.userID);
+            if (Objects.equals(userInfo.userID, userID)) {
+                update(userInfo);
             }
         };
-        roleChangedListener = new RoleChangedListener() {
-            @Override
-            public void onRoleChanged(String userID, ZegoLiveAudioRoomRole after) {
-                if (Objects.equals(userInfo.userID, userID)) {
-                    showHostTag(after == ZegoLiveAudioRoomRole.HOST);
-                }
+        microphoneStateChangeListener = (uiKitUser, isOn) -> {
+            if (Objects.equals(userInfo.userID, uiKitUser.userID)) {
+                userInfo.isMicOpen = isOn;
+                update(userInfo);
             }
         };
     }
@@ -67,46 +63,35 @@ public class ZegoAudioForegroundView extends FrameLayout {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         ZegoUIKit.addMicrophoneStateListener(microphoneStateChangeListener);
-        LiveAudioRoomManager.getInstance().addRoleChangedListener(roleChangedListener);
-        if (userInfo != null) {
-            showHostTag(LiveAudioRoomManager.getInstance().isUserHost(userInfo.userID));
-        }
-        if (userInfo != null && !ZegoUIKit.isMicrophoneOn(userInfo.userID)) {
-            showMicrophone(true);
-        } else {
-            showMicrophone(false);
-        }
-
+        LiveAudioRoomManager.getInstance().roleService.addRoleChangedListener(roleChangedListener);
+        update(userInfo);
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         ZegoUIKit.removeMicrophoneStateListener(microphoneStateChangeListener);
-        LiveAudioRoomManager.getInstance().removeRoleChangedListener(roleChangedListener);
+        LiveAudioRoomManager.getInstance().roleService.removeRoleChangedListener(roleChangedListener);
     }
 
     public void setUserInfo(ZegoUIKitUser userInfo) {
         this.userInfo = userInfo;
+        update(userInfo);
+    }
+
+    private void update(ZegoUIKitUser userInfo) {
+        Log.d(TAG, "update() called with: userInfo = [" + userInfo + "]");
         if (userInfo != null) {
-            boolean isHost = Objects.equals(ZegoUIKit.getRoomProperties().get("host"), userInfo.userID);
-            showHostTag(isHost);
-            showMicrophone(!userInfo.isMicOpen);
+            boolean isHost = LiveAudioRoomManager.getInstance().roleService.isUserHost(userInfo.userID);
             if (binding != null) {
-                binding.seatName.setText(userInfo.userName);
+                binding.foregroundIconHost.setVisibility(isHost ? View.VISIBLE : View.GONE);
             }
-        }
-    }
-
-    public void showMicrophone(boolean showMicStatusOnView) {
-        if (binding != null) {
-            binding.seatIconMic.setVisibility(showMicStatusOnView ? View.VISIBLE : View.INVISIBLE);
-        }
-    }
-
-    public void showHostTag(boolean showHostSignage) {
-        if (binding != null) {
-            binding.seatIconHost.setVisibility(showHostSignage ? View.VISIBLE : View.GONE);
+            if (binding != null) {
+                binding.foregroundUserName.setText(userInfo.userName);
+            }
+            if (binding != null) {
+                binding.foregroundAvatarContentMic.setVisibility(userInfo.isMicOpen ? GONE : VISIBLE);
+            }
         }
     }
 }

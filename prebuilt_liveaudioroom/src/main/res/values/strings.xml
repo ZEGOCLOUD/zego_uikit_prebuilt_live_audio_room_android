@@ -15,13 +15,14 @@
   <string name="take_the_seat">Take the seat</string>
   <string name="leave_the_seat">Leave the seat</string>
   <string name="remove_the_seat">Remove %s from seat</string>
-  <string name="remove_the_seat_title">Remove from seat</string>
+  <string name="remove_the_seat_title">Remove the speaker</string>
   <string name="remove_the_seat_message">Are you sure to let %s leave the seat?</string>
   <string name="leave_the_seat_message">Are you sure to leave the seat?</string>
   <string name="stop_room_title">Stop the live</string>
   <string name="stop_room_message">Are you sure to stop the live?</string>
   <string name="stop_room_cancel">@string/cancel</string>
   <string name="stop_room_ok">Stop it</string>
+  <string name="remove_fail_toast">Failed to remove %s from seat</string>
   <string name="ok">OK</string>
 
 

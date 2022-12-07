@@ -12,7 +12,7 @@ public class ZegoTranslationText {
 
     public ZegoDialogInfo leaveSeatDialogInfo = new ZegoDialogInfo("Leave the seat", "Are you sure to leave the seat?",
         "Cancel", "OK");
-    public ZegoDialogInfo removeSpeakerFromSeatDialogInfo = new ZegoDialogInfo("Remove from seat",
+    public ZegoDialogInfo removeSpeakerFromSeatDialogInfo = new ZegoDialogInfo("Remove the speaker",
         "Are you sure to remove %s from seat?", "Cancel", "OK");
 
 }

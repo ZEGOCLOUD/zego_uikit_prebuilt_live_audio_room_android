@@ -54,6 +54,8 @@ public class ConfirmDialog extends Dialog {
 
         if (!TextUtils.isEmpty(titleText)) {
             binding.confirmTitle.setText(titleText);
+        } else {
+            binding.confirmTitle.setVisibility(View.GONE);
         }
         if (!TextUtils.isEmpty(contentText)) {
             binding.confirmContent.setText(contentText);

@@ -114,7 +114,7 @@ public class BottomMenuBar extends LinearLayout {
         View view = null;
         switch (name) {
             case TOGGLE_MICROPHONE_BUTTON: {
-                view = new ZegoToggleMicrophoneButton(getContext());
+                view = new PermissionMicrophoneButton(getContext());
                 ((ZegoToggleMicrophoneButton) view).setIcon(R.drawable.audioroom_icon_mic_on,
                     R.drawable.audioroom_icon_mic_off);
                 LayoutParams params = generateChildLayoutParams();

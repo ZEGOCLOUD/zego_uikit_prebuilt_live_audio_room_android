@@ -12,22 +12,19 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.zegocloud.uikit.ZegoUIKit;
+import com.zegocloud.uikit.components.internal.RippleIconView;
 import com.zegocloud.uikit.components.memberlist.ZegoMemberListComparator;
 import com.zegocloud.uikit.components.memberlist.ZegoMemberListItemViewProvider;
-import com.zegocloud.uikit.components.internal.RippleIconView;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.R;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoTranslationText;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.databinding.LayoutMemberlistBinding;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 import com.zegocloud.uikit.service.defines.ZegoUserUpdateListener;
 import com.zegocloud.uikit.utils.Utils;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -81,7 +78,7 @@ public class LiveMemberList extends BottomSheetDialog {
                 ZegoUIKitUser you = null;
 
                 for (ZegoUIKitUser uiKitUser : userList) {
-                    boolean isHost = LiveAudioRoomManager.getInstance().isUserHost(uiKitUser.userID);
+                    boolean isHost = LiveAudioRoomManager.getInstance().roleService.isUserHost(uiKitUser.userID);
                     boolean isYou = Objects.equals(uiKitUser, ZegoUIKit.getLocalUser());
                     if (isHost) {
                         host.add(uiKitUser);
@@ -89,7 +86,7 @@ public class LiveMemberList extends BottomSheetDialog {
                         if (isYou) {
                             you = uiKitUser;
                         } else {
-                            boolean isSpeaker = LiveAudioRoomManager.getInstance().isUserSpeaker(uiKitUser.userID);
+                            boolean isSpeaker = LiveAudioRoomManager.getInstance().roleService.isUserSpeaker(uiKitUser.userID);
                             if (isSpeaker) {
                                 speaker.add(uiKitUser);
                             } else {
@@ -141,8 +138,8 @@ public class LiveMemberList extends BottomSheetDialog {
                     ZegoUIKitUser localUser = ZegoUIKit.getLocalUser();
 
                     boolean isYou = Objects.equals(uiKitUser, localUser);
-                    boolean isHost = LiveAudioRoomManager.getInstance().isUserHost(uiKitUser.userID);
-                    boolean isSpeaker = LiveAudioRoomManager.getInstance().isUserSpeaker(uiKitUser.userID);
+                    boolean isHost = LiveAudioRoomManager.getInstance().roleService.isUserHost(uiKitUser.userID);
+                    boolean isSpeaker = LiveAudioRoomManager.getInstance().roleService.isUserSpeaker(uiKitUser.userID);
                     StringBuilder builder = new StringBuilder();
                     if (isYou || isHost || isSpeaker) {
                         builder.append("(");
