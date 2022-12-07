@@ -38,9 +38,8 @@ dependencies {
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
-    api project(path: ':signaling_plugin')
-//    api project(path: ':uikit')
     api 'com.github.ZEGOCLOUD:zego_uikit_android:preview_1.7.0'
+    api 'com.github.ZEGOCLOUD:zego_uikit_signaling_plugin_android:preview_1.2.0'
     api 'com.guolindev.permissionx:permissionx:1.6.4'
 
     
