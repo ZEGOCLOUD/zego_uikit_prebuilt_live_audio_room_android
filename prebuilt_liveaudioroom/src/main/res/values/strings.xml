@@ -16,7 +16,7 @@
   <string name="leave_the_seat">Leave the seat</string>
   <string name="remove_the_seat">Remove %s from seat</string>
   <string name="remove_the_seat_title">Remove the speaker</string>
-  <string name="remove_the_seat_message">Are you sure to let %s leave the seat?</string>
+  <string name="remove_the_seat_message">Are you sure to remove %s from the seat?</string>
   <string name="leave_the_seat_message">Are you sure to leave the seat?</string>
   <string name="stop_room_title">Stop the live</string>
   <string name="stop_room_message">Are you sure to stop the live?</string>

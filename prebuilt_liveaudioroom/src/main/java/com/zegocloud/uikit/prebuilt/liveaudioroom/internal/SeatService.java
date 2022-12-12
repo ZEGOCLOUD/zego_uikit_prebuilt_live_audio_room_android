@@ -1,8 +1,8 @@
 package com.zegocloud.uikit.prebuilt.liveaudioroom.internal;
 
 import com.zegocloud.uikit.ZegoUIKit;
-import com.zegocloud.uikit.service.defines.ZegoUIKitPluginCallback;
 import com.zegocloud.uikit.service.defines.ZegoUIKitSignalingPluginRoomAttributesOperatedCallback;
+import com.zegocloud.uikit.service.defines.ZegoUIKitSignalingPluginRoomPropertyOperatedCallback;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -35,9 +35,9 @@ public class SeatService {
             batchOperation = true;
             tryTakeSeat(toSeatIndex, null);
             removeUserFromSeat(fromSeatIndex, null);
-            ZegoUIKit.getSignalingPlugin().endRoomPropertiesBatchOperation(new ZegoUIKitPluginCallback() {
+            ZegoUIKit.getSignalingPlugin().endRoomPropertiesBatchOperation(new ZegoUIKitSignalingPluginRoomPropertyOperatedCallback() {
                 @Override
-                public void onResult(int errorCode, String errorMessage) {
+                public void onSignalingPluginRoomPropertyOperated(int errorCode, String errorMessage, List<String> errorKeys) {
                     batchOperation = false;
                 }
             });

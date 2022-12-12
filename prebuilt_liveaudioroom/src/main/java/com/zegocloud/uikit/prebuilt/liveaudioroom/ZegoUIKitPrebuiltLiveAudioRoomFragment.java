@@ -4,6 +4,7 @@ import android.Manifest.permission;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +27,6 @@ import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.RoleService.RoleChang
 import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.SeatService;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.SeatService.SeatChangedListener;
 import com.zegocloud.uikit.service.defines.ZegoScenario;
-import com.zegocloud.uikit.service.defines.ZegoUIKitCallback;
 import com.zegocloud.uikit.service.defines.ZegoUIKitPluginCallback;
 import java.util.Collections;
 import java.util.HashMap;
@@ -43,6 +43,7 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
     //Additional controls list
     private Map<ZegoLiveAudioRoomRole, List<View>> bottomMenuBarExtendedButtons = new HashMap<>();
     private View liveAudioRoomBackgroundView;
+    private Handler handler = new Handler(Looper.getMainLooper());
     private Runnable hideTipsRunnable = new Runnable() {
         @Override
         public void run() {
@@ -85,37 +86,36 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
             ZegoUIKit.installPlugins(Collections.singletonList(ZegoSignalingPlugin.getInstance()));
             ZegoUIKit.init(requireActivity().getApplication(), appID, appSign, ZegoScenario.STANDARD_CHATROOM);
 
-            ZegoUIKit.login(userID, userName, new ZegoUIKitCallback() {
-                @Override
-                public void onResult(int errorCode) {
-                    if (errorCode == 0) {
-                        ZegoUIKit.joinRoom(roomID, new ZegoUIKitCallback() {
-                            @Override
-                            public void onResult(int errorCode) {
-                                if (errorCode == 0) {
-                                    ZegoUIKit.getSignalingPlugin()
-                                        .login(userID, userName, new ZegoUIKitPluginCallback() {
-                                            @Override
-                                            public void onResult(int errorCode, String errorMessage) {
-                                                if (errorCode == 0) {
-                                                    ZegoUIKit.getSignalingPlugin()
-                                                        .joinRoom(roomID, new ZegoUIKitPluginCallback() {
-                                                            @Override
-                                                            public void onResult(int errorCode, String errorMessage) {
-                                                                if (errorCode == 0) {
-                                                                    onRoomJoinSucceed();
-                                                                } else {
-                                                                    onRoomJoinFailed();
-                                                                }
-                                                            }
-                                                        });
-                                                }
-                                            }
-                                        });
-                                }
+            ZegoUIKit.login(userID, userName);
+            ZegoUIKit.joinRoom(roomID, errorCode -> {
+                if (errorCode == 0) {
+                    ZegoUIKit.getSignalingPlugin().login(userID, userName, new ZegoUIKitPluginCallback() {
+                        @Override
+                        public void onResult(int errorCode, String errorMessage) {
+                            if (errorCode == 0) {
+                                ZegoUIKit.getSignalingPlugin().joinRoom(roomID, new ZegoUIKitPluginCallback() {
+                                    @Override
+                                    public void onResult(int errorCode, String errorMessage) {
+                                        if (errorCode == 0) {
+                                            onRoomJoinSucceed();
+                                        } else {
+//                                            String text = "join room,errorCode:" + errorCode;
+//                                            showTopTipsOnFragment("加入房间失败，" + text, false);
+                                            onRoomJoinFailed();
+                                        }
+                                    }
+                                });
+                            } else {
+//                                String text = "login zim,errorCode:" + errorCode;
+//                                showTopTipsOnFragment("加入房间失败，" + text, false);
+                                onRoomJoinFailed();
                             }
-                        });
-                    }
+                        }
+                    });
+                } else {
+//                    String text = "join RTC,errorCode:" + errorCode;
+//                    showTopTipsOnFragment("加入房间失败，" + text, false);
+                    onRoomJoinFailed();
                 }
             });
         }
@@ -143,14 +143,14 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        LiveAudioRoomManager.getInstance().setTranslationText(config.translationText);
         if (liveAudioRoomBackgroundView != null) {
             binding.liveAudioRoomBackgroundContainer.addView(liveAudioRoomBackgroundView);
         }
         binding.liveAudioRoomContainer.setSeatConfig(config.seatConfig);
         binding.liveAudioRoomContainer.setLayoutConfig(config.layoutConfig);
         binding.liveAudioRoomContainer.setLockSeatList(config.hostSeatIndexes);
-        LiveAudioRoomManager.getInstance().setTranslationText(config.translationText);
-
+        initLiveAudioRoomWidgets();
     }
 
     private void onRoomJoinFailed() {
@@ -163,24 +163,12 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
         LiveAudioRoomManager.getInstance().setPrebuiltUICallBack(new PrebuiltUICallBack() {
             @Override
             public void showTopTips(String tips, boolean green) {
-                binding.liveToast.setText(tips);
-                binding.liveToast.setVisibility(View.VISIBLE);
-                if (green) {
-                    binding.liveToast.setBackgroundColor(Color.parseColor("#55BC9E"));
-                } else {
-                    binding.liveToast.setBackgroundColor(Color.parseColor("#BD5454"));
-                }
-                Handler handler = binding.getRoot().getHandler();
-                if (handler != null) {
-                    handler.removeCallbacks(hideTipsRunnable);
-                    handler.postDelayed(hideTipsRunnable, 2000);
-                }
+                showTopTipsOnFragment(tips, green);
             }
         });
         LiveAudioRoomManager.getInstance().roleService.addRoleChangedListener(new RoleChangedListener() {
             @Override
             public void onRoleChanged(String userID, ZegoLiveAudioRoomRole after) {
-                Log.d(ZegoUIKit.TAG, "onRoleChanged() called with: userID = [" + userID + "], after = [" + after + "]");
                 String selfUserID = getArguments().getString("userID");
                 if (Objects.equals(userID, selfUserID)) {
                     if (after == ZegoLiveAudioRoomRole.HOST) {
@@ -209,8 +197,6 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
                 binding.liveAudioRoomContainer.onRoomPropertiesFullUpdated(updateKeys, oldProperties, properties);
             }
         });
-
-        initLiveAudioRoomWidgets();
 
         if (config.role == ZegoLiveAudioRoomRole.HOST || config.role == ZegoLiveAudioRoomRole.SPEAKER) {
             boolean invalid = config.takeSeatIndexWhenJoining < 0
@@ -257,10 +243,19 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
 
     }
 
-    private void initLiveAudioRoomWidgets() {
-        binding.roomName.setText(config.translationText.prebuiltTitle);
-        binding.roomId.setText("ID: " + getArguments().getString("roomID"));
+    private void showTopTipsOnFragment(String tips, boolean green) {
+        binding.liveToast.setText(tips);
+        binding.liveToast.setVisibility(View.VISIBLE);
+        if (green) {
+            binding.liveToast.setBackgroundColor(Color.parseColor("#55BC9E"));
+        } else {
+            binding.liveToast.setBackgroundColor(Color.parseColor("#BD5454"));
+        }
+        handler.removeCallbacks(hideTipsRunnable);
+        handler.postDelayed(hideTipsRunnable, 2000);
+    }
 
+    private void initLiveAudioRoomWidgets() {
         if (config.confirmDialogInfo != null) {
             binding.liveRoomExit.setConfirmDialogInfo(getDialogInfo());
         }
@@ -297,6 +292,8 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
             binding.liveAudioRoomBackgroundContainer.addView(view);
         }
     }
+
+    private static final String TAG = "ZegoUIKitPrebuiltLiveAu";
 
     /**
      * Leaving the room
@@ -367,10 +364,12 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
             });
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        leaveRoom();
-    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (requireActivity().isFinishing()) {
+            leaveRoom();
+        }
+    }
 }

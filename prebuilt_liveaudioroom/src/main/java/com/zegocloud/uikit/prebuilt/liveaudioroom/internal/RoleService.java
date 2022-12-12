@@ -1,7 +1,6 @@
 package com.zegocloud.uikit.prebuilt.liveaudioroom.internal;
 
 import android.text.TextUtils;
-import android.util.Log;
 import com.zegocloud.uikit.ZegoUIKit;
 import com.zegocloud.uikit.plugin.common.IZegoUIKitSignalingPlugin;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoLiveAudioRoomRole;
@@ -18,7 +17,6 @@ import java.util.Objects;
 
 public class RoleService {
 
-    private static final String TAG = "RoleService";
     private List<RoleChangedListener> roleChangedListenerList = new ArrayList<>();
     private Map<String, HashMap<String, String>> userAttrs = new HashMap<>();
 
@@ -31,8 +29,6 @@ public class RoleService {
             @Override
             public void onUsersInRoomAttributesQueried(List<ZegoUserInRoomAttributesInfo> attributes, String nextFlag,
                 int errorCode, String errorMessage) {
-                Log.d(TAG, "queryUsersInRoomAttributes() called with: attributes = [" + attributes + "], nextFlag = ["
-                    + nextFlag + "], errorCode = [" + errorCode + "], errorMessage = [" + errorMessage + "]");
                 if (errorCode == 0) {
                     for (ZegoUserInRoomAttributesInfo attribute : attributes) {
                         ZegoLiveAudioRoomRole userRole = ZegoLiveAudioRoomRole.get(
@@ -46,9 +42,6 @@ public class RoleService {
             }
         });
         signalingPlugin.addUsersInRoomAttributesUpdateListener((updateKeys, oldAttributes, attributes, editor) -> {
-            Log.d(TAG,
-                "onUsersInRoomAttributesUpdated() called with: updateKeys = [" + updateKeys + "], oldAttributes = ["
-                    + oldAttributes + "], attributes = [" + attributes + "], editor = [" + editor + "]");
             userAttrs.clear();
             for (ZegoUserInRoomAttributesInfo attribute : attributes) {
                 ZegoLiveAudioRoomRole newUserRole = ZegoLiveAudioRoomRole.get(attribute.getAttributes().get("role"));

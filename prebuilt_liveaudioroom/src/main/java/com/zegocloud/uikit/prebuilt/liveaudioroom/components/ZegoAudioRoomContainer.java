@@ -48,6 +48,7 @@ public class ZegoAudioRoomContainer extends LinearLayout {
     private BottomActionDialog takeSeatActionDialog;
     private AudioRoomSeat clickedSeat;
     private Dialog currentDialog;
+    private boolean hasNoNameUserOnSeat = false;
 
     public ZegoAudioRoomContainer(@NonNull Context context) {
         super(context);
@@ -69,6 +70,28 @@ public class ZegoAudioRoomContainer extends LinearLayout {
         userUpdateListener = new ZegoUserUpdateListener() {
             @Override
             public void onUserJoined(List<ZegoUIKitUser> userInfoList) {
+                if (hasNoNameUserOnSeat) {
+                    for (ZegoUIKitUser uiKitUser : userInfoList) {
+                        for (AudioRoomSeat audioRoomSeat : audioRoomSeatList) {
+                            boolean emptyName = TextUtils.isEmpty(audioRoomSeat.uiKitUser.userName);
+                            if (emptyName && audioRoomSeat.uiKitUser == uiKitUser) {
+                                audioRoomSeat.uiKitUser.userName = uiKitUser.userName;
+                                AudioRoomSeatView seatView = getAudioRoomSeatView(audioRoomSeat);
+                                seatView.updateUser();
+                            }
+                        }
+                    }
+                    boolean hasEmptyName = false;
+                    for (AudioRoomSeat audioRoomSeat : audioRoomSeatList) {
+                        if (TextUtils.isEmpty(audioRoomSeat.uiKitUser.userName)) {
+                            hasEmptyName = true;
+                            break;
+                        }
+                    }
+                    if (!hasEmptyName) {
+                        hasNoNameUserOnSeat = false;
+                    }
+                }
             }
 
             @Override
@@ -126,9 +149,9 @@ public class ZegoAudioRoomContainer extends LinearLayout {
         if (audioRoomSeat.uiKitUser == uiKitUser) {
             return;
         }
+        AudioRoomSeatView seatView = getAudioRoomSeatView(audioRoomSeat);
         if (audioRoomSeat.uiKitUser == null) {
             audioRoomSeat.uiKitUser = uiKitUser;
-            AudioRoomSeatView seatView = getAudioRoomSeatView(audioRoomSeat);
             seatView.addUserToSeat(uiKitUser);
         }
     }
@@ -180,7 +203,7 @@ public class ZegoAudioRoomContainer extends LinearLayout {
                 audioRoomSeat.columnIndex = columnIndex;
                 audioRoomSeat.seatIndex = audioRoomSeatList.size();
                 audioRoomSeatList.add(audioRoomSeat);
-                AudioRoomSeatView seatView = new AudioRoomSeatView(getContext());
+                AudioRoomSeatView seatView = new AudioRoomSeatView(getContext(),audioRoomSeat);
                 seatView.setSeatConfig(seatConfig);
                 seatView.setOnClickListener(v -> {
                     if (System.currentTimeMillis() - lastClickTime < 500) {
@@ -457,7 +480,13 @@ public class ZegoAudioRoomContainer extends LinearLayout {
                 if (!TextUtils.isEmpty(oldValue)) {
                     removeUserFromSeat(Integer.parseInt(key));
                 }
-                addUserToSeat(Integer.parseInt(key), ZegoUIKit.getUser(newValue));
+
+                ZegoUIKitUser user = ZegoUIKit.getUser(newValue);
+                if (user == null) {
+                    user = new ZegoUIKitUser(newValue);
+                    hasNoNameUserOnSeat = true;
+                }
+                addUserToSeat(Integer.parseInt(key), user);
             }
         }
     }
@@ -468,7 +497,13 @@ public class ZegoAudioRoomContainer extends LinearLayout {
         }
         for (Entry<String, String> entry : map.entrySet()) {
             int seatIndex = Integer.parseInt(entry.getKey());
-            addUserToSeat(seatIndex, ZegoUIKit.getUser(entry.getValue()));
+            String userID = entry.getValue();
+            ZegoUIKitUser user = ZegoUIKit.getUser(userID);
+            if (user == null) {
+                user = new ZegoUIKitUser(userID);
+                hasNoNameUserOnSeat = true;
+            }
+            addUserToSeat(seatIndex, user);
         }
     }
 

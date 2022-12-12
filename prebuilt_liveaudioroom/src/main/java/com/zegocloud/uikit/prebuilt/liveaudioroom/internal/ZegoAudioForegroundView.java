@@ -2,7 +2,6 @@ package com.zegocloud.uikit.prebuilt.liveaudioroom.internal;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -38,15 +37,10 @@ public class ZegoAudioForegroundView extends FrameLayout {
         initView();
     }
 
-    private static final String TAG = "ZegoAudioForegroundView";
-
     private void initView() {
         binding = LayoutSeatForegroundBinding.inflate(LayoutInflater.from(getContext()), this, true);
         setUserInfo(userInfo);
         roleChangedListener = (userID, after) -> {
-            Log.d(TAG,
-                "ZegoAudioForegroundView onRoleChanged() called with: userID = [" + userID + "], after = [" + after
-                    + "],userInfo.userID:" + userInfo.userID);
             if (Objects.equals(userInfo.userID, userID)) {
                 update(userInfo);
             }
@@ -80,7 +74,6 @@ public class ZegoAudioForegroundView extends FrameLayout {
     }
 
     private void update(ZegoUIKitUser userInfo) {
-        Log.d(TAG, "update() called with: userInfo = [" + userInfo + "]");
         if (userInfo != null) {
             boolean isHost = LiveAudioRoomManager.getInstance().roleService.isUserHost(userInfo.userID);
             if (binding != null) {

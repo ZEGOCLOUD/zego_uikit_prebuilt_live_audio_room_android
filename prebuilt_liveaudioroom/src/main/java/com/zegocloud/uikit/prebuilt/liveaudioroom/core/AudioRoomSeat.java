@@ -8,14 +8,4 @@ public class AudioRoomSeat {
     public int rowIndex = 0;
     public int columnIndex = 0;
     public ZegoUIKitUser uiKitUser;
-
-    @Override
-    public String toString() {
-        return "AudioRoomSeat{" +
-            "seatIndex=" + seatIndex +
-            ", rowIndex=" + rowIndex +
-            ", columnIndex=" + columnIndex +
-            ", uiKitUser=" + uiKitUser +
-            '}';
-    }
 }

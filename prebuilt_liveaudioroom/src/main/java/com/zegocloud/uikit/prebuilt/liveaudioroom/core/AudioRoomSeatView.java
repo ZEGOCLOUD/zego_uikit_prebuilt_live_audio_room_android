@@ -1,6 +1,7 @@
 package com.zegocloud.uikit.prebuilt.liveaudioroom.core;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
@@ -10,7 +11,6 @@ import com.zegocloud.uikit.components.audiovideo.ZegoAvatarAlignment;
 import com.zegocloud.uikit.components.audiovideocontainer.ZegoAudioVideoViewConfig;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.databinding.ItemSeatBinding;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.ZegoAudioForegroundView;
-import com.zegocloud.uikit.service.defines.ZegoMicrophoneStateChangeListener;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 import com.zegocloud.uikit.utils.Utils;
 
@@ -18,10 +18,11 @@ public class AudioRoomSeatView extends FrameLayout {
 
     private ItemSeatBinding binding;
     private ZegoAudioVideoView audioVideoView;
-    private ZegoMicrophoneStateChangeListener microphoneStateChangeListener;
+    private AudioRoomSeat audioRoomSeat;
 
-    public AudioRoomSeatView(@NonNull Context context) {
+    public AudioRoomSeatView(@NonNull Context context, AudioRoomSeat audioRoomSeat) {
         super(context);
+        this.audioRoomSeat = audioRoomSeat;
         initView();
     }
 
@@ -37,6 +38,7 @@ public class AudioRoomSeatView extends FrameLayout {
         int contentSize = Utils.dp2px(54, getContext().getResources().getDisplayMetrics());
         audioVideoView.setAvatarSize(avatarSize, contentSize);
         audioVideoView.setAvatarAlignment(ZegoAvatarAlignment.START);
+        audioVideoView.setSoundWaveColor(Color.parseColor("#0055FF"));
         binding.seatAvatarContentEmpty.setVisibility(VISIBLE);
     }
 
@@ -57,14 +59,16 @@ public class AudioRoomSeatView extends FrameLayout {
             return;
         }
         if (seatConfig.foregroundViewProvider != null) {
-            audioVideoView.setForegroundViewProvider(seatConfig.foregroundViewProvider);
+            audioVideoView.setForegroundViewProvider((parent, uiKitUser) -> {
+                return seatConfig.foregroundViewProvider.getForegroundView(parent, uiKitUser, audioRoomSeat.seatIndex);
+            });
         } else {
             audioVideoView.setForegroundViewProvider((parent, uiKitUser) -> {
                 return new ZegoAudioForegroundView(parent.getContext(), uiKitUser);
             });
         }
         ZegoAudioVideoViewConfig audioVideoViewConfig = new ZegoAudioVideoViewConfig();
-        audioVideoViewConfig.showSoundWavesInAudioMode = seatConfig.showSoundWavesInAudioMode;
+        audioVideoViewConfig.showSoundWavesInAudioMode = seatConfig.showSoundWaveInAudioMode;
         audioVideoView.setAudioVideoConfig(audioVideoViewConfig);
         if (seatConfig.backgroundColor != 0) {
             setBackgroundColor(seatConfig.backgroundColor);
@@ -72,5 +76,11 @@ public class AudioRoomSeatView extends FrameLayout {
         if (seatConfig.backgroundImage != null) {
             setBackground(seatConfig.backgroundImage);
         }
+    }
+
+    public void updateUser() {
+        String userID = audioVideoView.getUserID();
+        audioVideoView.setUserID("");
+        audioVideoView.setUserID(userID);
     }
 }

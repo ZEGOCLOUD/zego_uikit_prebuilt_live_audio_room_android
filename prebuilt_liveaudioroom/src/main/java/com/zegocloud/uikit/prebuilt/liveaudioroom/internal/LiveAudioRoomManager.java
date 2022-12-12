@@ -37,16 +37,11 @@ public class LiveAudioRoomManager {
         signalingPlugin.addRoomPropertyUpdateListener(new ZegoUIKitSignalingPluginRoomPropertyUpdateListener() {
             @Override
             public void onRoomPropertyUpdated(String key, String oldValue, String newValue) {
-                Log.d(ZegoUIKit.TAG, "onRoomPropertyUpdated() called with: key = [" + key + "], oldValue = [" + oldValue
-                    + "], newValue = [" + newValue + "]");
             }
 
             @Override
             public void onRoomPropertiesFullUpdated(List<String> updateKeys, HashMap<String, String> oldProperties,
                 HashMap<String, String> properties) {
-                Log.d(ZegoUIKit.TAG,
-                    "onRoomPropertiesFullUpdated() called with: updateKeys = [" + updateKeys + "], oldProperties = ["
-                        + oldProperties + "], properties = [" + properties + "]");
                 roleService.onRoomPropertiesFullUpdated(updateKeys, oldProperties, properties);
                 seatService.onRoomPropertiesFullUpdated(updateKeys, oldProperties, properties);
 

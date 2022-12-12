@@ -30,44 +30,6 @@
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintTop_toTopOf="parent" />
 
-  <RelativeLayout
-    android:id="@+id/live_host_layout"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="16dp"
-    android:layout_marginTop="10dp"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent">
-
-    <TextView
-      android:id="@+id/room_name"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginEnd="12dp"
-      android:ellipsize="end"
-      android:maxWidth="120dp"
-      android:maxLines="1"
-      android:singleLine="true"
-      android:text="@string/prebuit_title"
-      android:textColor="@color/ar_ff1b1b1b"
-      android:textSize="16sp" />
-
-    <TextView
-      android:id="@+id/room_id"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_below="@+id/room_name"
-      android:layout_marginTop="1.5dp"
-      android:layout_marginEnd="12dp"
-      android:ellipsize="end"
-      android:maxWidth="120dp"
-      android:maxLines="1"
-      android:singleLine="true"
-      android:text="ID: "
-      android:textColor="@color/ar_ff606060"
-      android:textSize="10sp" />
-  </RelativeLayout>
-
   <com.zegocloud.uikit.components.message.ZegoInRoomMessageView
     android:id="@+id/live_message_view"
     android:layout_width="270dp"
