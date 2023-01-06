@@ -100,21 +100,18 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
                                             onRoomJoinSucceed();
                                         } else {
 //                                            String text = "join room,errorCode:" + errorCode;
-//                                            showTopTipsOnFragment("加入房间失败，" + text, false);
                                             onRoomJoinFailed();
                                         }
                                     }
                                 });
                             } else {
 //                                String text = "login zim,errorCode:" + errorCode;
-//                                showTopTipsOnFragment("加入房间失败，" + text, false);
                                 onRoomJoinFailed();
                             }
                         }
                     });
                 } else {
 //                    String text = "join RTC,errorCode:" + errorCode;
-//                    showTopTipsOnFragment("加入房间失败，" + text, false);
                     onRoomJoinFailed();
                 }
             });
@@ -151,6 +148,11 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
         binding.liveAudioRoomContainer.setLayoutConfig(config.layoutConfig);
         binding.liveAudioRoomContainer.setLockSeatList(config.hostSeatIndexes);
         initLiveAudioRoomWidgets();
+        if (config.role == ZegoLiveAudioRoomRole.HOST) {
+            binding.roomBottomMenuBar.showHostButtons();
+        }else if(config.role == ZegoLiveAudioRoomRole.AUDIENCE){
+            binding.roomBottomMenuBar.showAudienceButtons();
+        }
     }
 
     private void onRoomJoinFailed() {
@@ -235,6 +237,8 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
                         if (errorCode != 0) {
                         }
                     });
+                } else {
+
                 }
 
             }
@@ -272,7 +276,7 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
         binding.roomBottomMenuBar.showAudienceButtons();
     }
 
-    public void addButtonToMenuBar(List<View> widgets, ZegoLiveAudioRoomRole role) {
+    public void addButtonToBottomMenuBar(List<View> widgets, ZegoLiveAudioRoomRole role) {
         bottomMenuBarExtendedButtons.put(role, widgets);
         if (binding != null) {
             binding.roomBottomMenuBar.addExtendedButtons(widgets, role);

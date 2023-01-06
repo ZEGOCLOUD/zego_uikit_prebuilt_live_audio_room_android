@@ -73,19 +73,23 @@ public class ZegoAudioRoomContainer extends LinearLayout {
                 if (hasNoNameUserOnSeat) {
                     for (ZegoUIKitUser uiKitUser : userInfoList) {
                         for (AudioRoomSeat audioRoomSeat : audioRoomSeatList) {
-                            boolean emptyName = TextUtils.isEmpty(audioRoomSeat.uiKitUser.userName);
-                            if (emptyName && audioRoomSeat.uiKitUser == uiKitUser) {
-                                audioRoomSeat.uiKitUser.userName = uiKitUser.userName;
-                                AudioRoomSeatView seatView = getAudioRoomSeatView(audioRoomSeat);
-                                seatView.updateUser();
+                            if (audioRoomSeat.uiKitUser != null) {
+                                boolean emptyName = TextUtils.isEmpty(audioRoomSeat.uiKitUser.userName);
+                                if (emptyName && audioRoomSeat.uiKitUser == uiKitUser) {
+                                    audioRoomSeat.uiKitUser.userName = uiKitUser.userName;
+                                    AudioRoomSeatView seatView = getAudioRoomSeatView(audioRoomSeat);
+                                    seatView.updateUser();
+                                }
                             }
                         }
                     }
                     boolean hasEmptyName = false;
                     for (AudioRoomSeat audioRoomSeat : audioRoomSeatList) {
-                        if (TextUtils.isEmpty(audioRoomSeat.uiKitUser.userName)) {
-                            hasEmptyName = true;
-                            break;
+                        if (audioRoomSeat.uiKitUser != null) {
+                            if (TextUtils.isEmpty(audioRoomSeat.uiKitUser.userName)) {
+                                hasEmptyName = true;
+                                break;
+                            }
                         }
                     }
                     if (!hasEmptyName) {
@@ -203,7 +207,7 @@ public class ZegoAudioRoomContainer extends LinearLayout {
                 audioRoomSeat.columnIndex = columnIndex;
                 audioRoomSeat.seatIndex = audioRoomSeatList.size();
                 audioRoomSeatList.add(audioRoomSeat);
-                AudioRoomSeatView seatView = new AudioRoomSeatView(getContext(),audioRoomSeat);
+                AudioRoomSeatView seatView = new AudioRoomSeatView(getContext(), audioRoomSeat);
                 seatView.setSeatConfig(seatConfig);
                 seatView.setOnClickListener(v -> {
                     if (System.currentTimeMillis() - lastClickTime < 500) {
