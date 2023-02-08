@@ -8,9 +8,9 @@
   <color name="black">#FF000000</color>
   <color name="white">#FFFFFFFF</color>
 
-  <color name="ar_00000000">#00000000</color>
-  <color name="ar_fff4f4f6">#fff4f4f6</color>
-  <color name="ar_ff1b1b1b">#ff1b1b1b</color>
-  <color name="ar_ff606060">#ff606060</color>
+  <color name="liveaudioroom_ar_00000000">#00000000</color>
+  <color name="liveaudioroom_ar_fff4f4f6">#fff4f4f6</color>
+  <color name="liveaudioroom_ar_ff1b1b1b">#ff1b1b1b</color>
+  <color name="liveaudioroom_ar_ff606060">#ff606060</color>
 
 </resources>

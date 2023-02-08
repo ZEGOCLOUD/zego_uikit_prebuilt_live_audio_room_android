@@ -1,6 +1,5 @@
 package com.zegocloud.uikit.prebuilt.liveaudioroom.core;
 
-import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 

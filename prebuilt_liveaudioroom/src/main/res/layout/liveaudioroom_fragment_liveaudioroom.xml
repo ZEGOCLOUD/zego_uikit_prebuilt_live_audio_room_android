@@ -3,7 +3,7 @@
   xmlns:app="http://schemas.android.com/apk/res-auto"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:background="@color/ar_fff4f4f6">
+  android:background="@color/liveaudioroom_ar_fff4f4f6">
 
   <FrameLayout
     android:id="@+id/live_audio_room_background_container"

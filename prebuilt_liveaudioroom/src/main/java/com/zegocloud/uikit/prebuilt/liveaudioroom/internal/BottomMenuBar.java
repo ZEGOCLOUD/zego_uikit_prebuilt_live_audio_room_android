@@ -204,7 +204,10 @@ public class BottomMenuBar extends LinearLayout {
                 showList.addAll(menuBarViews.subList(0, showChildCount));
                 hideList = menuBarViews.subList(showChildCount, menuBarViews.size());
             }
-            showList.add(new MoreButton(getContext()));
+            MoreButton moreButton = new MoreButton(getContext());
+            LayoutParams params = generateChildLayoutParams();
+            moreButton.setLayoutParams(params);
+            showList.add(moreButton);
         }
 
         for (int i = 0; i < showList.size(); i++) {

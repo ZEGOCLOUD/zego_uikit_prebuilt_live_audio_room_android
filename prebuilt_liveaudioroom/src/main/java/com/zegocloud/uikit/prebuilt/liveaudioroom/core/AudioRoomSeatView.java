@@ -9,14 +9,14 @@ import com.google.android.flexbox.FlexboxLayout;
 import com.zegocloud.uikit.components.audiovideo.ZegoAudioVideoView;
 import com.zegocloud.uikit.components.audiovideo.ZegoAvatarAlignment;
 import com.zegocloud.uikit.components.audiovideocontainer.ZegoAudioVideoViewConfig;
-import com.zegocloud.uikit.prebuilt.liveaudioroom.databinding.ItemSeatBinding;
+import com.zegocloud.uikit.prebuilt.liveaudioroom.databinding.LiveaudioroomItemSeatBinding;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.ZegoAudioForegroundView;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 import com.zegocloud.uikit.utils.Utils;
 
 public class AudioRoomSeatView extends FrameLayout {
 
-    private ItemSeatBinding binding;
+    private LiveaudioroomItemSeatBinding binding;
     private ZegoAudioVideoView audioVideoView;
     private AudioRoomSeat audioRoomSeat;
 
@@ -27,7 +27,7 @@ public class AudioRoomSeatView extends FrameLayout {
     }
 
     private void initView() {
-        binding = ItemSeatBinding.inflate(LayoutInflater.from(getContext()), this, true);
+        binding = LiveaudioroomItemSeatBinding.inflate(LayoutInflater.from(getContext()), this, true);
         int width = Utils.dp2px(80, getContext().getResources().getDisplayMetrics());
         int height = Utils.dp2px(80, getContext().getResources().getDisplayMetrics());
         FlexboxLayout.LayoutParams flexChildParams = new FlexboxLayout.LayoutParams(width, height);

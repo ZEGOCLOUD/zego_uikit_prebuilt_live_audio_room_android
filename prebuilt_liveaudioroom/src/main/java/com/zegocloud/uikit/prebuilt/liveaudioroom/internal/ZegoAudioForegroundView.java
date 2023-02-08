@@ -8,7 +8,7 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.zegocloud.uikit.ZegoUIKit;
-import com.zegocloud.uikit.prebuilt.liveaudioroom.databinding.LayoutSeatForegroundBinding;
+import com.zegocloud.uikit.prebuilt.liveaudioroom.databinding.LiveaudioroomLayoutSeatForegroundBinding;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.RoleService.RoleChangedListener;
 import com.zegocloud.uikit.service.defines.ZegoMicrophoneStateChangeListener;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
@@ -16,7 +16,7 @@ import java.util.Objects;
 
 public class ZegoAudioForegroundView extends FrameLayout {
 
-    private LayoutSeatForegroundBinding binding;
+    private LiveaudioroomLayoutSeatForegroundBinding binding;
     private ZegoUIKitUser userInfo;
     private RoleChangedListener roleChangedListener;
     private ZegoMicrophoneStateChangeListener microphoneStateChangeListener;
@@ -38,7 +38,7 @@ public class ZegoAudioForegroundView extends FrameLayout {
     }
 
     private void initView() {
-        binding = LayoutSeatForegroundBinding.inflate(LayoutInflater.from(getContext()), this, true);
+        binding = LiveaudioroomLayoutSeatForegroundBinding.inflate(LayoutInflater.from(getContext()), this, true);
         setUserInfo(userInfo);
         roleChangedListener = (userID, after) -> {
             if (Objects.equals(userInfo.userID, userID)) {

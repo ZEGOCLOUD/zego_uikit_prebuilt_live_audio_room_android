@@ -1,6 +1,7 @@
 package com.zegocloud.uikit.prebuilt.liveaudioroom;
 
 import android.Manifest.permission;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,14 +13,14 @@ import android.view.ViewGroup;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import com.permissionx.guolindev.PermissionX;
 import com.permissionx.guolindev.callback.RequestCallback;
 import com.zegocloud.uikit.ZegoUIKit;
-import com.zegocloud.uikit.plugin.signaling.ZegoSignalingPlugin;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoDialogInfo;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoLiveAudioRoomRole;
-import com.zegocloud.uikit.prebuilt.liveaudioroom.databinding.FragmentZegouikitPrebuiltLiveaudioroomBinding;
+import com.zegocloud.uikit.prebuilt.liveaudioroom.databinding.LiveaudioroomFragmentLiveaudioroomBinding;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.ConfirmDialog;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.LiveAudioRoomManager;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.PrebuiltUICallBack;
@@ -28,7 +29,8 @@ import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.SeatService;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.SeatService.SeatChangedListener;
 import com.zegocloud.uikit.service.defines.ZegoScenario;
 import com.zegocloud.uikit.service.defines.ZegoUIKitPluginCallback;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +41,7 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
     //Current page exit
     private OnBackPressedCallback onBackPressedCallback;
     private ZegoUIKitPrebuiltLiveAudioRoomConfig config;
-    private FragmentZegouikitPrebuiltLiveaudioroomBinding binding;
+    private LiveaudioroomFragmentLiveaudioroomBinding binding;
     //Additional controls list
     private Map<ZegoLiveAudioRoomRole, List<View>> bottomMenuBarExtendedButtons = new HashMap<>();
     private View liveAudioRoomBackgroundView;
@@ -83,7 +85,7 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
         String userID = arguments.getString("userID");
         String roomID = getArguments().getString("roomID");
         if (appID != 0) {
-            ZegoUIKit.installPlugins(Collections.singletonList(ZegoSignalingPlugin.getInstance()));
+            //            ZegoUIKit.installPlugins(Collections.singletonList(ZegoSignalingPlugin.getInstance()));
             ZegoUIKit.init(requireActivity().getApplication(), appID, appSign, ZegoScenario.STANDARD_CHATROOM);
 
             ZegoUIKit.login(userID, userName);
@@ -99,19 +101,19 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
                                         if (errorCode == 0) {
                                             onRoomJoinSucceed();
                                         } else {
-//                                            String text = "join room,errorCode:" + errorCode;
+                                            //                                            String text = "join room,errorCode:" + errorCode;
                                             onRoomJoinFailed();
                                         }
                                     }
                                 });
                             } else {
-//                                String text = "login zim,errorCode:" + errorCode;
+                                //                                String text = "login zim,errorCode:" + errorCode;
                                 onRoomJoinFailed();
                             }
                         }
                     });
                 } else {
-//                    String text = "join RTC,errorCode:" + errorCode;
+                    //                    String text = "join RTC,errorCode:" + errorCode;
                     onRoomJoinFailed();
                 }
             });
@@ -133,7 +135,7 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentZegouikitPrebuiltLiveaudioroomBinding.inflate(inflater, container, false);
+        binding = LiveaudioroomFragmentLiveaudioroomBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
@@ -148,11 +150,6 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
         binding.liveAudioRoomContainer.setLayoutConfig(config.layoutConfig);
         binding.liveAudioRoomContainer.setLockSeatList(config.hostSeatIndexes);
         initLiveAudioRoomWidgets();
-        if (config.role == ZegoLiveAudioRoomRole.HOST) {
-            binding.roomBottomMenuBar.showHostButtons();
-        }else if(config.role == ZegoLiveAudioRoomRole.AUDIENCE){
-            binding.roomBottomMenuBar.showAudienceButtons();
-        }
     }
 
     private void onRoomJoinFailed() {
@@ -237,8 +234,6 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
                         if (errorCode != 0) {
                         }
                     });
-                } else {
-
                 }
 
             }
@@ -326,22 +321,22 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
     private ZegoDialogInfo getDialogInfo() {
         ZegoDialogInfo dialogInfo = new ZegoDialogInfo();
         if (config.confirmDialogInfo.title == null) {
-            dialogInfo.title = getString(R.string.stop_room_title);
+            dialogInfo.title = getString(R.string.liveaudioroom_stop_room_title);
         } else {
             dialogInfo.title = config.confirmDialogInfo.title;
         }
         if (config.confirmDialogInfo.message == null) {
-            dialogInfo.message = getString(R.string.stop_room_message);
+            dialogInfo.message = getString(R.string.liveaudioroom_stop_room_message);
         } else {
             dialogInfo.message = config.confirmDialogInfo.message;
         }
         if (config.confirmDialogInfo.confirmButtonName == null) {
-            dialogInfo.confirmButtonName = getString(R.string.stop_room_ok);
+            dialogInfo.confirmButtonName = getString(R.string.liveaudioroom_stop_room_ok);
         } else {
             dialogInfo.confirmButtonName = config.confirmDialogInfo.confirmButtonName;
         }
         if (config.confirmDialogInfo.cancelButtonName == null) {
-            dialogInfo.cancelButtonName = getString(R.string.stop_room_cancel);
+            dialogInfo.cancelButtonName = getString(R.string.liveaudioroom_stop_room_cancel);
         } else {
             dialogInfo.cancelButtonName = config.confirmDialogInfo.cancelButtonName;
         }
@@ -349,14 +344,26 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
     }
 
     private void requestPermissionIfNeeded(RequestCallback requestCallback) {
+        List<String> permissions = Arrays.asList(permission.RECORD_AUDIO);
+
+        boolean allGranted = true;
+        for (String permission : permissions) {
+            if (ContextCompat.checkSelfPermission(getContext(), permission) != PackageManager.PERMISSION_GRANTED) {
+                allGranted = false;
+            }
+        }
+        if (allGranted) {
+            requestCallback.onResult(true, permissions, new ArrayList<>());
+            return;
+        }
         PermissionX.init(requireActivity()).permissions(permission.RECORD_AUDIO)
             .onExplainRequestReason((scope, deniedList) -> {
-                String message = getContext().getString(R.string.permission_explain_mic);
-                scope.showRequestReasonDialog(deniedList, message, getString(R.string.ok));
+                String message = getContext().getString(R.string.liveaudioroom_permission_explain_mic);
+                scope.showRequestReasonDialog(deniedList, message, getString(R.string.liveaudioroom_ok));
             }).onForwardToSettings((scope, deniedList) -> {
-                String message = getContext().getString(R.string.settings_mic);
-                scope.showForwardToSettingsDialog(deniedList, message, getString(R.string.settings),
-                    getString(R.string.cancel));
+                String message = getContext().getString(R.string.liveaudioroom_settings_mic);
+                scope.showForwardToSettingsDialog(deniedList, message, getString(R.string.liveaudioroom_settings),
+                    getString(R.string.liveaudioroom_cancel));
             }).request(new RequestCallback() {
                 @Override
                 public void onResult(boolean allGranted, @NonNull List<String> grantedList,

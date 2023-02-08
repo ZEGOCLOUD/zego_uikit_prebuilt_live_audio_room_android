@@ -13,7 +13,7 @@ import android.view.WindowManager;
 
 import androidx.annotation.StringRes;
 
-import com.zegocloud.uikit.prebuilt.liveaudioroom.databinding.DialogConfirmBinding;
+import com.zegocloud.uikit.prebuilt.liveaudioroom.databinding.LiveaudioroomDialogConfirmBinding;
 
 public class ConfirmDialog extends Dialog {
 
@@ -23,7 +23,7 @@ public class ConfirmDialog extends Dialog {
     private String cancelText;
     private DialogInterface.OnClickListener positiveListener;
     private DialogInterface.OnClickListener negativeListener;
-    private DialogConfirmBinding binding;
+    private LiveaudioroomDialogConfirmBinding binding;
     private View negativeView;
     private View positiveView;
 
@@ -43,7 +43,7 @@ public class ConfirmDialog extends Dialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DialogConfirmBinding.inflate(getLayoutInflater());
+        binding = LiveaudioroomDialogConfirmBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         Window window = getWindow();
         window.setGravity(Gravity.CENTER);

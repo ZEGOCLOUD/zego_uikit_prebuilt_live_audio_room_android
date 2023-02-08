@@ -7,7 +7,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="324dp"
         android:layout_height="170dp"
-        android:background="@drawable/confirm_dialog_bg">
+        android:background="@drawable/liveaudioroom_confirm_dialog_bg">
 
         <TextView
             android:id="@+id/confirm_title"
@@ -58,7 +58,7 @@
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:gravity="center"
-            android:text="@string/cancel"
+            android:text="@string/liveaudioroom_cancel"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/confirm_line_vertical"
@@ -88,7 +88,7 @@
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:gravity="center"
-            android:text="@string/ok"
+            android:text="@string/liveaudioroom_ok"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

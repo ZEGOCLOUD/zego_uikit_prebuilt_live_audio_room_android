@@ -37,7 +37,7 @@ public class BottomActionDialog extends Dialog {
         FrameLayout rootView = new FrameLayout(getContext());
         childParent = new LinearLayout(getContext());
         childParent.setOrientation(LinearLayout.VERTICAL);
-        childParent.setBackgroundResource(R.drawable.bg_bottom_menu_dialog);
+        childParent.setBackgroundResource(R.drawable.liveaudioroom_bg_bottom_menu_dialog);
         rootView.addView(childParent);
 
         DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();

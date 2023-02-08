@@ -21,7 +21,7 @@ import com.zegocloud.uikit.components.memberlist.ZegoMemberListComparator;
 import com.zegocloud.uikit.components.memberlist.ZegoMemberListItemViewProvider;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.R;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoTranslationText;
-import com.zegocloud.uikit.prebuilt.liveaudioroom.databinding.LayoutMemberlistBinding;
+import com.zegocloud.uikit.prebuilt.liveaudioroom.databinding.LiveaudioroomLayoutMemberlistBinding;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 import com.zegocloud.uikit.service.defines.ZegoUserUpdateListener;
 import com.zegocloud.uikit.utils.Utils;
@@ -31,7 +31,7 @@ import java.util.Objects;
 
 public class LiveMemberList extends BottomSheetDialog {
 
-    private LayoutMemberlistBinding binding;
+    private LiveaudioroomLayoutMemberlistBinding binding;
     private ZegoMemberListItemViewProvider memberListItemProvider;
     private ZegoUserUpdateListener userUpdateListener;
 
@@ -50,7 +50,7 @@ public class LiveMemberList extends BottomSheetDialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = LayoutMemberlistBinding.inflate(getLayoutInflater());
+        binding = LiveaudioroomLayoutMemberlistBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         Window window = getWindow();
@@ -122,7 +122,7 @@ public class LiveMemberList extends BottomSheetDialog {
                 @Override
                 public View onCreateView(ViewGroup parent) {
                     View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.item_liveroom_member, parent, false);
+                        .inflate(R.layout.liveaudioroom_item_member, parent, false);
                     int height = Utils.dp2px(70, parent.getContext().getResources().getDisplayMetrics());
                     view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height));
                     return view;
@@ -145,19 +145,19 @@ public class LiveMemberList extends BottomSheetDialog {
                         builder.append("(");
                     }
                     if (isYou) {
-                        builder.append(getContext().getString(R.string.you));
+                        builder.append(getContext().getString(R.string.liveaudioroom_you));
                     }
                     if (isHost) {
                         if (isYou) {
                             builder.append(",");
                         }
-                        builder.append(getContext().getString(R.string.host));
+                        builder.append(getContext().getString(R.string.liveaudioroom_host));
                     } else {
                         if (isSpeaker) {
                             if (isYou) {
                                 builder.append(",");
                             }
-                            builder.append(getContext().getString(R.string.speaker));
+                            builder.append(getContext().getString(R.string.liveaudioroom_speaker));
                         }
                     }
 
