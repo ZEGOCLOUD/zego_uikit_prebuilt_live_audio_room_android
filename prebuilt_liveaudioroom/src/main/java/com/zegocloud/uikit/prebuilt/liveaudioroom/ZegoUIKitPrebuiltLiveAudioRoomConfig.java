@@ -11,6 +11,7 @@ import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoTranslationText;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class ZegoUIKitPrebuiltLiveAudioRoomConfig {
 
@@ -29,6 +30,8 @@ public class ZegoUIKitPrebuiltLiveAudioRoomConfig {
     public ZegoLiveAudioRoomLayoutConfig layoutConfig = new ZegoLiveAudioRoomLayoutConfig();
     public ZegoLiveAudioRoomSeatConfig seatConfig = new ZegoLiveAudioRoomSeatConfig();
     public List<Integer> hostSeatIndexes = Collections.singletonList(0);
+    public String userAvatarUrl;
+    public Map<String, String> userInRoomAttributes;
 
     public static ZegoUIKitPrebuiltLiveAudioRoomConfig host() {
         ZegoUIKitPrebuiltLiveAudioRoomConfig config = new ZegoUIKitPrebuiltLiveAudioRoomConfig();

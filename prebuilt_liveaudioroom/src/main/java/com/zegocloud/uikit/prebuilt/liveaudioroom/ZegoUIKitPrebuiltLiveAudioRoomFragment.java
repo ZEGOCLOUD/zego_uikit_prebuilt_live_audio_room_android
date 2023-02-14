@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,13 +28,17 @@ import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.PrebuiltUICallBack;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.RoleService.RoleChangedListener;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.SeatService;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.SeatService.SeatChangedListener;
+import com.zegocloud.uikit.service.defines.ZegoAudioVideoResourceMode;
 import com.zegocloud.uikit.service.defines.ZegoScenario;
+import com.zegocloud.uikit.service.defines.ZegoSetUsersInRoomAttributesCallback;
 import com.zegocloud.uikit.service.defines.ZegoUIKitPluginCallback;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 
 public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
@@ -86,9 +91,10 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
         String roomID = getArguments().getString("roomID");
         if (appID != 0) {
             //            ZegoUIKit.installPlugins(Collections.singletonList(ZegoSignalingPlugin.getInstance()));
-            ZegoUIKit.init(requireActivity().getApplication(), appID, appSign, ZegoScenario.STANDARD_CHATROOM);
+            ZegoUIKit.init(requireActivity().getApplication(), appID, appSign, ZegoScenario.GENERAL);
 
             ZegoUIKit.login(userID, userName);
+            ZegoUIKit.setAudioVideoResourceMode(ZegoAudioVideoResourceMode.RTC_ONLY);
             ZegoUIKit.joinRoom(roomID, errorCode -> {
                 if (errorCode == 0) {
                     ZegoUIKit.getSignalingPlugin().login(userID, userName, new ZegoUIKitPluginCallback() {
@@ -153,11 +159,11 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
     }
 
     private void onRoomJoinFailed() {
-        Log.d(ZegoUIKit.TAG, "onRoomJoinFailed() called");
+        Log.w(ZegoUIKit.TAG, "onRoomJoinFailed() called");
     }
 
     private void onRoomJoinSucceed() {
-        Log.d(ZegoUIKit.TAG, "onRoomJoinSucceed() called");
+        Log.w(ZegoUIKit.TAG, "onRoomJoinSucceed() called");
         LiveAudioRoomManager.getInstance().init(getContext());
         LiveAudioRoomManager.getInstance().setPrebuiltUICallBack(new PrebuiltUICallBack() {
             @Override
@@ -196,6 +202,26 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
                 binding.liveAudioRoomContainer.onRoomPropertiesFullUpdated(updateKeys, oldProperties, properties);
             }
         });
+
+        String selfUserID = getArguments().getString("userID");
+        if (!TextUtils.isEmpty(config.userAvatarUrl)) {
+            ZegoUIKit.getSignalingPlugin()
+                .setUsersInRoomAttributes("avatar", config.userAvatarUrl, Collections.singletonList(selfUserID),
+                    new ZegoSetUsersInRoomAttributesCallback() {
+                        @Override
+                        public void onSetUsersInRoomAttributes(int errorCode, String errorMessage) {
+                            Log.d(ZegoUIKit.TAG, "onSetUsersInRoomAttributes() called with: errorCode = [" + errorCode
+                                + "], errorMessage = [" + errorMessage + "]");
+                        }
+                    });
+        }
+        if (config.userInRoomAttributes != null) {
+            for (Entry<String, String> entry : config.userInRoomAttributes.entrySet()) {
+                ZegoUIKit.getSignalingPlugin()
+                    .setUsersInRoomAttributes(entry.getKey(), entry.getValue(), Collections.singletonList(selfUserID),
+                        null);
+            }
+        }
 
         if (config.role == ZegoLiveAudioRoomRole.HOST || config.role == ZegoLiveAudioRoomRole.SPEAKER) {
             boolean invalid = config.takeSeatIndexWhenJoining < 0
@@ -291,8 +317,6 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
             binding.liveAudioRoomBackgroundContainer.addView(view);
         }
     }
-
-    private static final String TAG = "ZegoUIKitPrebuiltLiveAu";
 
     /**
      * Leaving the room

@@ -1,7 +1,7 @@
 <resources>
   <string name="app_name">prebuilt_liveaudioroom</string>
 
-  <string name="liveaudioroom_memberlist_title">Attendance</string>
+  <string name="liveaudioroom_memberlist_title">Audience</string>
   <string name="liveaudioroom_you">You</string>
   <string name="liveaudioroom_speaker">Speaker</string>
   <string name="liveaudioroom_host">Host</string>

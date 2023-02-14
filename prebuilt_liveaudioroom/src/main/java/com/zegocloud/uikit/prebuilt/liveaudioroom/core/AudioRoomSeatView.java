@@ -10,7 +10,7 @@ import com.zegocloud.uikit.components.audiovideo.ZegoAudioVideoView;
 import com.zegocloud.uikit.components.audiovideo.ZegoAvatarAlignment;
 import com.zegocloud.uikit.components.audiovideocontainer.ZegoAudioVideoViewConfig;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.databinding.LiveaudioroomItemSeatBinding;
-import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.ZegoAudioForegroundView;
+import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.ZegoAudioVideoForegroundView;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 import com.zegocloud.uikit.utils.Utils;
 
@@ -64,7 +64,7 @@ public class AudioRoomSeatView extends FrameLayout {
             });
         } else {
             audioVideoView.setForegroundViewProvider((parent, uiKitUser) -> {
-                return new ZegoAudioForegroundView(parent.getContext(), uiKitUser);
+                return new ZegoAudioVideoForegroundView(parent.getContext(), uiKitUser.userID);
             });
         }
         ZegoAudioVideoViewConfig audioVideoViewConfig = new ZegoAudioVideoViewConfig();

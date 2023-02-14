@@ -5,6 +5,8 @@ import com.zegocloud.uikit.ZegoUIKit;
 import com.zegocloud.uikit.plugin.common.IZegoUIKitSignalingPlugin;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoLiveAudioRoomRole;
 import com.zegocloud.uikit.service.defines.ZegoUIKitPluginCallback;
+import com.zegocloud.uikit.service.defines.ZegoUIKitSignalingPluginUsersInRoomAttributesUpdateListener;
+import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 import com.zegocloud.uikit.service.defines.ZegoUserInRoomAttributesInfo;
 import com.zegocloud.uikit.service.defines.ZegoUsersInRoomAttributesQueriedCallback;
 import com.zegocloud.uikit.service.defines.ZegoUsersInRoomAttributesQueryConfig;
@@ -41,24 +43,33 @@ public class RoleService {
                 }
             }
         });
-        signalingPlugin.addUsersInRoomAttributesUpdateListener((updateKeys, oldAttributes, attributes, editor) -> {
-            userAttrs.clear();
-            for (ZegoUserInRoomAttributesInfo attribute : attributes) {
-                ZegoLiveAudioRoomRole newUserRole = ZegoLiveAudioRoomRole.get(attribute.getAttributes().get("role"));
-                userAttrs.put(attribute.getUserID(), attribute.getAttributes());
-                for (RoleChangedListener roleChangedListener : roleChangedListenerList) {
-                    roleChangedListener.onRoleChanged(attribute.getUserID(), newUserRole);
-                }
-            }
-            // attribute delete.
-            for (ZegoUserInRoomAttributesInfo oldAttribute : oldAttributes) {
-                if (!userAttrs.containsKey(oldAttribute.getUserID())) {
-                    for (RoleChangedListener roleChangedListener : roleChangedListenerList) {
-                        roleChangedListener.onRoleChanged(oldAttribute.getUserID(), ZegoLiveAudioRoomRole.AUDIENCE);
+        signalingPlugin.addUsersInRoomAttributesUpdateListener(
+            new ZegoUIKitSignalingPluginUsersInRoomAttributesUpdateListener() {
+                @Override
+                public void onUsersInRoomAttributesUpdated(List<String> updateKeys,
+                    List<ZegoUserInRoomAttributesInfo> oldAttributes, List<ZegoUserInRoomAttributesInfo> attributes,
+                    ZegoUIKitUser editor) {
+
+                    userAttrs.clear();
+                    for (ZegoUserInRoomAttributesInfo attribute : attributes) {
+                        ZegoLiveAudioRoomRole newUserRole = ZegoLiveAudioRoomRole.get(
+                            attribute.getAttributes().get("role"));
+                        userAttrs.put(attribute.getUserID(), attribute.getAttributes());
+                        for (RoleChangedListener roleChangedListener : roleChangedListenerList) {
+                            roleChangedListener.onRoleChanged(attribute.getUserID(), newUserRole);
+                        }
+                    }
+                    // attribute delete.
+                    for (ZegoUserInRoomAttributesInfo oldAttribute : oldAttributes) {
+                        if (!userAttrs.containsKey(oldAttribute.getUserID())) {
+                            for (RoleChangedListener roleChangedListener : roleChangedListenerList) {
+                                roleChangedListener.onRoleChanged(oldAttribute.getUserID(),
+                                    ZegoLiveAudioRoomRole.AUDIENCE);
+                            }
+                        }
                     }
                 }
-            }
-        });
+            });
     }
 
     public void onRoomPropertiesFullUpdated(List<String> updateKeys, HashMap<String, String> oldProperties,

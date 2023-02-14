@@ -6,7 +6,7 @@ public class ZegoTranslationText {
     public String takeSeatMenuDialogButton = "Take the seat";
     public String leaveSeatMenuDialogButton = "Leave the seat";
     public String cancelMenuDialogButton = "Cancel";
-    public String memberListTitle = "Attendance";
+    public String memberListTitle = "Audience";
     public String removeSpeakerFailedToast = "Failed to remove %s from seat";
 
     public ZegoDialogInfo leaveSeatDialogInfo = new ZegoDialogInfo("Leave the seat", "Are you sure to leave the seat?",
