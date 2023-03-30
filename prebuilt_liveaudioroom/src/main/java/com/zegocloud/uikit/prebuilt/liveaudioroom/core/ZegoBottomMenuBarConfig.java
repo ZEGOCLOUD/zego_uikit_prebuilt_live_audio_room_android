@@ -11,9 +11,6 @@ public class ZegoBottomMenuBarConfig {
     public List<ZegoMenuBarButtonName> hostButtons = new ArrayList<>();
     public List<ZegoMenuBarButtonName> speakerButtons = new ArrayList<>();
     public List<ZegoMenuBarButtonName> audienceButtons = new ArrayList<>();
-//    public transient List<View> hostExtendButtons = new ArrayList<>();
-//    public transient List<View> speakerExtendButtons = new ArrayList<>();
-//    public transient List<View> audienceExtendButtons = new ArrayList<>();
 
     public ZegoMemberListConfig memberListConfig = new ZegoMemberListConfig();
 

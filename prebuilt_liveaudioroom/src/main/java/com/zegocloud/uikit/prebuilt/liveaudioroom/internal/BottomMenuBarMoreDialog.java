@@ -41,7 +41,7 @@ public class BottomMenuBarMoreDialog extends Dialog {
         subRoot.setOrientation(LinearLayout.VERTICAL);
         subRoot.setLayoutParams(new LinearLayout.LayoutParams(-1, -2));
         GradientDrawable drawable = new GradientDrawable();
-        drawable.setColor(Color.parseColor("#222222"));
+        drawable.setColor(Color.parseColor("#cccccc"));
         int corner = Utils.dp2px(16f, getContext().getResources().getDisplayMetrics());
         drawable.setCornerRadii(new float[]{corner, corner, corner, corner, 0, 0, 0, 0});
         subRoot.setBackground(drawable);

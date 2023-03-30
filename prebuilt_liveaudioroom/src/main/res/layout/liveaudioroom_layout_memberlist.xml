@@ -36,7 +36,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/live_member_list_list_count"
+            android:id="@+id/live_member_list_count"
             android:layout_width="wrap_content"
             android:layout_height="43dp"
             android:layout_marginTop="15dp"

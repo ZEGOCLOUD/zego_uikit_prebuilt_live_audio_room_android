@@ -7,23 +7,22 @@ import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView.ScaleType;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.content.ContextCompat;
-
 import com.zegocloud.uikit.components.audiovideo.ZegoLeaveButton;
+import com.zegocloud.uikit.components.audiovideo.ZegoSwitchAudioOutputButton;
 import com.zegocloud.uikit.components.audiovideo.ZegoToggleMicrophoneButton;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.R;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoBottomMenuBarConfig;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoInRoomMessageButton;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoLiveAudioRoomRole;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoMenuBarButtonName;
+import com.zegocloud.uikit.prebuilt.liveaudioroom.core.cohost.ZegoTakeSeatButton;
+import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.service.LiveAudioRoomManager;
 import com.zegocloud.uikit.utils.Utils;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,8 +37,9 @@ public class BottomMenuBar extends LinearLayout {
     private LinearLayout childLinearLayout;
     private ZegoInRoomMessageButton messageButton;
     private ZegoLiveAudioRoomRole currentRole;
-    private LiveMemberList livememberList;
     private ZegoBottomMenuBarConfig menuBarConfig = new ZegoBottomMenuBarConfig();
+
+    private LiveAudioRoomMemberList liveAudioRoomMemberList;
 
     public BottomMenuBar(@NonNull Context context) {
         super(context);
@@ -79,6 +79,7 @@ public class BottomMenuBar extends LinearLayout {
         int paddingEnd = Utils.dp2px(8, getResources().getDisplayMetrics());
         childLinearLayout.setPadding(0, 0, paddingEnd, 0);
 
+        liveAudioRoomMemberList = new LiveAudioRoomMemberList(getContext());
     }
 
     private List<View> getMenuBarViews(List<ZegoMenuBarButtonName> list) {
@@ -122,23 +123,38 @@ public class BottomMenuBar extends LinearLayout {
             }
             break;
             case SHOW_MEMBER_LIST_BUTTON: {
-                view = new ImageView(getContext());
-                ((ImageView) view).setImageResource(R.drawable.audioroom_icon_member);
+                view = new MemberListButton(getContext());
                 LayoutParams params = generateChildLayoutParams();
                 view.setLayoutParams(params);
                 view.setOnClickListener(v -> {
-                    livememberList = new LiveMemberList(getContext());
-                    if (menuBarConfig != null && menuBarConfig.memberListConfig != null) {
-                        livememberList.setMemberListItemViewProvider(
-                            menuBarConfig.memberListConfig.memberListItemViewProvider);
+                    if (!liveAudioRoomMemberList.isShowing()) {
+                        liveAudioRoomMemberList.show();
                     }
-                    livememberList.show();
                 });
             }
             break;
             case LEAVE_BUTTON: {
                 view = new ZegoLeaveButton(getContext());
                 ((ZegoLeaveButton) view).setIcon(R.drawable.audioroom_icon_close);
+                LayoutParams params = generateChildLayoutParams();
+                view.setLayoutParams(params);
+            }
+            break;
+            case APPLY_TO_TAKE_SEAT_BUTTON: {
+                view = new ZegoTakeSeatButton(getContext());
+                LayoutParams params = generateChildLayoutParams();
+                params.width = LayoutParams.WRAP_CONTENT;
+                view.setLayoutParams(params);
+            }
+            break;
+            case SWITCH_AUDIO_OUTPUT_BUTTON: {
+                view = new ZegoSwitchAudioOutputButton(getContext());
+                LayoutParams params = generateChildLayoutParams();
+                view.setLayoutParams(params);
+            }
+            break;
+            case CLOSE_SEAT_BUTTON: {
+                view = new CloseSeatButton(getContext());
                 LayoutParams params = generateChildLayoutParams();
                 view.setLayoutParams(params);
             }
@@ -153,14 +169,14 @@ public class BottomMenuBar extends LinearLayout {
     public void addExtendedButtons(List<View> viewList, ZegoLiveAudioRoomRole role) {
         extendedButtons.put(role, viewList);
         if (role == currentRole) {
-            notifyListChanged();
+            notifyBottomBarViewListChanged();
         }
     }
 
     public void clearExtendedButtons(ZegoLiveAudioRoomRole role) {
         extendedButtons.remove(role);
         if (role == currentRole) {
-            notifyListChanged();
+            notifyBottomBarViewListChanged();
         }
     }
 
@@ -174,7 +190,9 @@ public class BottomMenuBar extends LinearLayout {
         moreDialog.setHideChildren(hideList);
     }
 
-    private void notifyListChanged() {
+    private static final String TAG = "BottomMenuBar";
+
+    private void notifyBottomBarViewListChanged() {
         removeAllChildViews();
         showList.clear();
         hideList.clear();
@@ -224,17 +242,134 @@ public class BottomMenuBar extends LinearLayout {
 
     public void showHostButtons() {
         currentRole = ZegoLiveAudioRoomRole.HOST;
-        notifyListChanged();
+        notifyBottomBarViewListChanged();
+        boolean seatLocked = LiveAudioRoomManager.getInstance().seatService.isSeatLocked();
+        showLockState(seatLocked);
     }
 
     public void showSpeakerButtons() {
         currentRole = ZegoLiveAudioRoomRole.SPEAKER;
-        notifyListChanged();
+        notifyBottomBarViewListChanged();
     }
 
     public void showAudienceButtons() {
         currentRole = ZegoLiveAudioRoomRole.AUDIENCE;
-        notifyListChanged();
+        notifyBottomBarViewListChanged();
+        boolean seatLocked = LiveAudioRoomManager.getInstance().seatService.isSeatLocked();
+        if (seatLocked) {
+            showTakeSeatButton();
+        } else {
+            hideTakeSeatButton();
+        }
+    }
+
+    public void showLockState(boolean lock) {
+        for (View view : showList) {
+            if (view instanceof CloseSeatButton) {
+                if (lock) {
+                    ((CloseSeatButton) view).open();
+                } else {
+                    ((CloseSeatButton) view).close();
+                }
+            }
+        }
+        for (View view : hideList) {
+            if (view instanceof MemberListButton) {
+                if (lock) {
+                    ((CloseSeatButton) view).open();
+                } else {
+                    ((CloseSeatButton) view).close();
+                }
+            }
+        }
+    }
+
+    public void showLockSeatButton() {
+        for (View view : showList) {
+            if (view instanceof CloseSeatButton) {
+                view.setVisibility(VISIBLE);
+            }
+        }
+        for (View view : hideList) {
+            if (view instanceof CloseSeatButton) {
+                view.setVisibility(VISIBLE);
+            }
+        }
+    }
+
+    public void hideLockSeatButton() {
+        for (View view : showList) {
+            if (view instanceof CloseSeatButton) {
+                view.setVisibility(GONE);
+            }
+        }
+        for (View view : hideList) {
+            if (view instanceof CloseSeatButton) {
+                view.setVisibility(GONE);
+            }
+        }
+    }
+
+    public void showTakeSeatButton() {
+        for (View view : showList) {
+            if (view instanceof ZegoTakeSeatButton) {
+                view.setVisibility(VISIBLE);
+            }
+        }
+        for (View view : hideList) {
+            if (view instanceof ZegoTakeSeatButton) {
+                view.setVisibility(VISIBLE);
+            }
+        }
+    }
+
+    public void hideTakeSeatButton() {
+        for (View view : showList) {
+            if (view instanceof ZegoTakeSeatButton) {
+                view.setVisibility(GONE);
+            }
+        }
+        for (View view : hideList) {
+            if (view instanceof ZegoTakeSeatButton) {
+                view.setVisibility(GONE);
+            }
+        }
+    }
+
+    public void showRedPoint() {
+        for (View view : showList) {
+            if (view instanceof MemberListButton) {
+                ((MemberListButton) view).showRedPoint();
+            }
+        }
+        for (View view : hideList) {
+            if (view instanceof MemberListButton) {
+                ((MemberListButton) view).showRedPoint();
+            }
+        }
+        liveAudioRoomMemberList.updateList();
+    }
+
+    public void hideRedPoint() {
+        for (View view : showList) {
+            if (view instanceof MemberListButton) {
+                ((MemberListButton) view).hideRedPoint();
+            }
+        }
+        for (View view : hideList) {
+            if (view instanceof MemberListButton) {
+                ((MemberListButton) view).hideRedPoint();
+            }
+        }
+        if (liveAudioRoomMemberList != null) {
+            liveAudioRoomMemberList.updateList();
+        }
+    }
+
+    public void updateMemberList() {
+        if (liveAudioRoomMemberList != null) {
+            liveAudioRoomMemberList.updateList();
+        }
     }
 
     public void setConfig(ZegoBottomMenuBarConfig menuBarConfig) {
@@ -243,7 +378,9 @@ public class BottomMenuBar extends LinearLayout {
         }
         this.menuBarConfig = menuBarConfig;
         showInRoomMessageButton(menuBarConfig.showInRoomMessageButton);
+        liveAudioRoomMemberList.setMemberListItemConfig(menuBarConfig.memberListConfig);
     }
+
 
     public class MoreButton extends AppCompatImageView {
 

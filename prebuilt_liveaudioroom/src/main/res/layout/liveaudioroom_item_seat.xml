@@ -13,10 +13,11 @@
     app:layout_constraintTop_toTopOf="parent">
 
     <ImageView
+      android:id="@+id/seat_state_lock"
       android:layout_width="54dp"
       android:layout_height="54dp"
       android:layout_gravity="center"
-      android:scaleType="center"
+      android:scaleType="fitCenter"
       android:src="@drawable/audioroom_icon_on_stage"
       app:layout_constraintLeft_toLeftOf="parent"
       app:layout_constraintRight_toRightOf="parent"

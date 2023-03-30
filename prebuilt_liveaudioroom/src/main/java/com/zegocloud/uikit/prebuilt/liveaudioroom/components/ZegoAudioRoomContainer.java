@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,18 +17,18 @@ import com.zegocloud.uikit.prebuilt.liveaudioroom.R;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.AudioRoomSeat;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.AudioRoomSeatView;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoDialogInfo;
+import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoInnerText;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoLiveAudioRoomLayoutAlignment;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoLiveAudioRoomLayoutConfig;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoLiveAudioRoomLayoutRowConfig;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoLiveAudioRoomSeatConfig;
-import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoTranslationText;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.BottomActionDialog;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.ConfirmDialog;
-import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.LiveAudioRoomManager;
+import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.service.LiveAudioRoomManager;
+import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.service.SeatService;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 import com.zegocloud.uikit.service.defines.ZegoUserUpdateListener;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -35,9 +36,7 @@ import java.util.Objects;
 
 public class ZegoAudioRoomContainer extends LinearLayout {
 
-    private List<AudioRoomSeat> audioRoomSeatList = new ArrayList<>();
     private ZegoUserUpdateListener userUpdateListener;
-    private ZegoLiveAudioRoomLayoutConfig layoutConfig;
     private ZegoLiveAudioRoomSeatConfig seatConfig;
     private List<Integer> lockSeatIndexesForHost;
     private long lastClickTime = 0;
@@ -71,12 +70,13 @@ public class ZegoAudioRoomContainer extends LinearLayout {
             @Override
             public void onUserJoined(List<ZegoUIKitUser> userInfoList) {
                 if (hasNoNameUserOnSeat) {
+                    List<AudioRoomSeat> audioRoomSeatList = LiveAudioRoomManager.getInstance().seatService.getAudioRoomSeatList();
                     for (ZegoUIKitUser uiKitUser : userInfoList) {
                         for (AudioRoomSeat audioRoomSeat : audioRoomSeatList) {
-                            if (audioRoomSeat.uiKitUser != null) {
-                                boolean emptyName = TextUtils.isEmpty(audioRoomSeat.uiKitUser.userName);
-                                if (emptyName && audioRoomSeat.uiKitUser == uiKitUser) {
-                                    audioRoomSeat.uiKitUser.userName = uiKitUser.userName;
+                            if (audioRoomSeat.isNotEmpty()) {
+                                boolean emptyName = TextUtils.isEmpty(audioRoomSeat.getUser().userName);
+                                if (emptyName && audioRoomSeat.isTakenByUser(uiKitUser)) {
+                                    audioRoomSeat.getUser().userName = uiKitUser.userName;
                                     AudioRoomSeatView seatView = getAudioRoomSeatView(audioRoomSeat);
                                     seatView.updateUser();
                                 }
@@ -85,8 +85,8 @@ public class ZegoAudioRoomContainer extends LinearLayout {
                     }
                     boolean hasEmptyName = false;
                     for (AudioRoomSeat audioRoomSeat : audioRoomSeatList) {
-                        if (audioRoomSeat.uiKitUser != null) {
-                            if (TextUtils.isEmpty(audioRoomSeat.uiKitUser.userName)) {
+                        if (audioRoomSeat.isNotEmpty()) {
+                            if (TextUtils.isEmpty(audioRoomSeat.getUser().userName)) {
                                 hasEmptyName = true;
                                 break;
                             }
@@ -108,69 +108,32 @@ public class ZegoAudioRoomContainer extends LinearLayout {
     }
 
     private void removeUserFromSeat(int seatIndex) {
-        if (seatIndex < 0 || seatIndex >= audioRoomSeatList.size()) {
-            return;
+        AudioRoomSeat audioRoomSeat = LiveAudioRoomManager.getInstance().seatService.tryGetAudioRoomSeat(seatIndex);
+        if (audioRoomSeat != null) {
+            removeUserFromSeat(audioRoomSeat);
         }
-        AudioRoomSeat audioRoomSeat = audioRoomSeatList.get(seatIndex);
-        removeUserFromSeat(audioRoomSeat);
     }
 
     private void removeUserFromSeat(String userID) {
-        AudioRoomSeat audioRoomSeat = getAudioRoomSeat(userID);
+        AudioRoomSeat audioRoomSeat = LiveAudioRoomManager.getInstance().seatService.findUserRoomSeat(userID);
         if (audioRoomSeat != null) {
             removeUserFromSeat(audioRoomSeat);
         }
     }
 
     private void removeUserFromSeat(AudioRoomSeat audioRoomSeat) {
-        if (audioRoomSeat.uiKitUser != null) {
-            audioRoomSeat.uiKitUser = null;
-            AudioRoomSeatView seatView = getAudioRoomSeatView(audioRoomSeat);
-            seatView.removeUserFromSeat();
-        }
+        AudioRoomSeatView seatView = getAudioRoomSeatView(audioRoomSeat);
+        seatView.setUser(null);
     }
 
-    private AudioRoomSeat getAudioRoomSeat(String userID) {
-        AudioRoomSeat seat = null;
-        for (int i = 0; i < audioRoomSeatList.size(); i++) {
-            AudioRoomSeat audioRoomSeat = audioRoomSeatList.get(i);
-            if (audioRoomSeat.uiKitUser != null && Objects.equals(userID, audioRoomSeat.uiKitUser.userID)) {
-                seat = audioRoomSeat;
-                break;
-            }
-        }
-        return seat;
-    }
 
     public void addUserToSeat(int seatIndex, ZegoUIKitUser uiKitUser) {
-        if (seatIndex < 0 || seatIndex >= audioRoomSeatList.size()) {
-            return;
-        }
         if (uiKitUser == null) {
             return;
         }
-        AudioRoomSeat audioRoomSeat = audioRoomSeatList.get(seatIndex);
-        if (audioRoomSeat.uiKitUser == uiKitUser) {
-            return;
-        }
+        AudioRoomSeat audioRoomSeat = LiveAudioRoomManager.getInstance().seatService.tryGetAudioRoomSeat(seatIndex);
         AudioRoomSeatView seatView = getAudioRoomSeatView(audioRoomSeat);
-        if (audioRoomSeat.uiKitUser == null) {
-            audioRoomSeat.uiKitUser = uiKitUser;
-            seatView.addUserToSeat(uiKitUser);
-        }
-    }
-
-    public void addUserToSeat(ZegoUIKitUser uiKitUser) {
-        int firstEmptyIndex = -1;
-        for (int i = 0; i < audioRoomSeatList.size(); i++) {
-            if (audioRoomSeatList.get(i).uiKitUser == null) {
-                firstEmptyIndex = i;
-                break;
-            }
-        }
-        if (firstEmptyIndex != -1) {
-            addUserToSeat(firstEmptyIndex, uiKitUser);
-        }
+        seatView.setUser(uiKitUser);
     }
 
     @Override
@@ -192,9 +155,9 @@ public class ZegoAudioRoomContainer extends LinearLayout {
 
 
     public void setLayoutConfig(ZegoLiveAudioRoomLayoutConfig layoutConfig) {
-        this.layoutConfig = layoutConfig;
-        audioRoomSeatList.clear();
+        List<AudioRoomSeat> audioRoomSeatList = LiveAudioRoomManager.getInstance().seatService.getAudioRoomSeatList();
 
+        int seatIndex = 0;
         for (int rowIndex = 0; rowIndex < layoutConfig.rowConfigs.size(); rowIndex++) {
             ZegoLiveAudioRoomLayoutRowConfig rowConfig = layoutConfig.rowConfigs.get(rowIndex);
             FlexboxLayout flexboxLayout = new FlexboxLayout(getContext());
@@ -202,18 +165,15 @@ public class ZegoAudioRoomContainer extends LinearLayout {
             params.bottomMargin = layoutConfig.rowSpacing;
             addView(flexboxLayout, params);
             for (int columnIndex = 0; columnIndex < rowConfig.count; columnIndex++) {
-                AudioRoomSeat audioRoomSeat = new AudioRoomSeat();
-                audioRoomSeat.rowIndex = rowIndex;
-                audioRoomSeat.columnIndex = columnIndex;
-                audioRoomSeat.seatIndex = audioRoomSeatList.size();
-                audioRoomSeatList.add(audioRoomSeat);
+                AudioRoomSeat audioRoomSeat = audioRoomSeatList.get(seatIndex);
+                seatIndex = seatIndex + 1;
                 AudioRoomSeatView seatView = new AudioRoomSeatView(getContext(), audioRoomSeat);
                 seatView.setSeatConfig(seatConfig);
                 seatView.setOnClickListener(v -> {
                     if (System.currentTimeMillis() - lastClickTime < 500) {
                         return;
                     }
-                    onSeatViewClicked(audioRoomSeat);
+                    onSeatViewClicked(seatView);
                     lastClickTime = System.currentTimeMillis();
                 });
                 flexboxLayout.addView(seatView);
@@ -244,32 +204,30 @@ public class ZegoAudioRoomContainer extends LinearLayout {
         }
     }
 
-    private int findMySeatIndex() {
-        for (AudioRoomSeat audioRoomSeat : audioRoomSeatList) {
-            if (Objects.equals(audioRoomSeat.uiKitUser, ZegoUIKit.getLocalUser())) {
-                return audioRoomSeat.seatIndex;
-            }
-        }
-        return -1;
-    }
-
-    private void onSeatViewClicked(AudioRoomSeat audioRoomSeat) {
+    private void onSeatViewClicked(AudioRoomSeatView seatView) {
         if (ZegoUIKit.getLocalUser() == null) {
             return;
         }
+        AudioRoomSeat audioRoomSeat = seatView.getAudioRoomSeat();
+        if (seatConfig != null && seatConfig.seatClickedListener != null) {
+            ViewGroup parent = (ViewGroup) seatView.getParent();
+            seatConfig.seatClickedListener.onSeatClicked(parent, audioRoomSeat.seatIndex, audioRoomSeat.getUser());
+            return;
+        }
+
         boolean isLocalUserHost = LiveAudioRoomManager.getInstance().roleService.isLocalUserHost();
-        if (audioRoomSeat.uiKitUser == null) {
-            if (isLocalUserHost || lockSeatIndexesForHost.contains(audioRoomSeat.seatIndex)) {
+        if (audioRoomSeat.isEmpty()) {
+            if (isLocalUserHost || lockSeatIndexesForHost.contains(audioRoomSeat.seatIndex) || seatView.isLocked()) {
                 return;
             }
-            int mySeatIndex = findMySeatIndex();
+            int mySeatIndex = LiveAudioRoomManager.getInstance().seatService.findMyRoomSeatIndex();
             if (mySeatIndex == -1) {
                 showTakeSeatActionDialog(audioRoomSeat);
             } else {
                 LiveAudioRoomManager.getInstance().seatService.switchSeat(mySeatIndex, audioRoomSeat.seatIndex);
             }
         } else {
-            if (Objects.equals(audioRoomSeat.uiKitUser, ZegoUIKit.getLocalUser())) {
+            if (Objects.equals(audioRoomSeat.getUser(), ZegoUIKit.getLocalUser())) {
                 if (!isLocalUserHost) {
                     showLeaveSeatActionDialog(audioRoomSeat);
                 }
@@ -281,14 +239,10 @@ public class ZegoAudioRoomContainer extends LinearLayout {
         }
     }
 
-    public int getSeatCount() {
-        return audioRoomSeatList.size();
-    }
-
     private void showTakeSeatActionDialog(AudioRoomSeat audioRoomSeat) {
         clickedSeat = audioRoomSeat;
         List<String> stringList = new ArrayList<>();
-        ZegoTranslationText translationText = LiveAudioRoomManager.getInstance().getTranslationText();
+        ZegoInnerText translationText = LiveAudioRoomManager.getInstance().getInnerText();
         if (translationText != null && translationText.takeSeatMenuDialogButton != null) {
             stringList.add(translationText.takeSeatMenuDialogButton);
         } else {
@@ -304,11 +258,14 @@ public class ZegoAudioRoomContainer extends LinearLayout {
         takeSeatActionDialog.show();
         takeSeatActionDialog.setOnDialogClickListener((dialog, which) -> {
             if (which == 0) {
-                LiveAudioRoomManager.getInstance().seatService.tryTakeSeat(audioRoomSeat.seatIndex,
-                    (errorCode, errorMessage, errorKeys) -> {
-                        if (errorCode == 0) {
-                        }
-                    });
+                SeatService seatService = LiveAudioRoomManager.getInstance().seatService;
+                if (!seatService.isSeatLocked()) {
+                    seatService.tryTakeSeat(audioRoomSeat.seatIndex,
+                        (errorCode, errorMessage, errorKeys) -> {
+                            if (errorCode == 0) {
+                            }
+                        });
+                }
             }
             dialog.dismiss();
         });
@@ -324,7 +281,7 @@ public class ZegoAudioRoomContainer extends LinearLayout {
 
     private void showLeaveSeatActionDialog(AudioRoomSeat audioRoomSeat) {
         List<String> stringList = new ArrayList<>();
-        ZegoTranslationText translationText = LiveAudioRoomManager.getInstance().getTranslationText();
+        ZegoInnerText translationText = LiveAudioRoomManager.getInstance().getInnerText();
         if (translationText != null && translationText.leaveSeatMenuDialogButton != null) {
             stringList.add(translationText.leaveSeatMenuDialogButton);
         } else {
@@ -348,14 +305,14 @@ public class ZegoAudioRoomContainer extends LinearLayout {
     }
 
     private void showLeaveSeatConfirmDialog(AudioRoomSeat audioRoomSeat) {
-        if (audioRoomSeat.uiKitUser == null) {
+        if (audioRoomSeat.isEmpty()) {
             return;
         }
         String title = getContext().getString(R.string.liveaudioroom_leave_the_seat);
         String message = getContext().getString(R.string.liveaudioroom_leave_the_seat_message);
         String cancelButtonName = getContext().getString(R.string.liveaudioroom_cancel);
         String confirmButtonName = getContext().getString(R.string.liveaudioroom_ok);
-        ZegoTranslationText translationText = LiveAudioRoomManager.getInstance().getTranslationText();
+        ZegoInnerText translationText = LiveAudioRoomManager.getInstance().getInnerText();
         if (translationText != null) {
             ZegoDialogInfo dialogInfo = translationText.leaveSeatDialogInfo;
             if (dialogInfo != null && dialogInfo.title != null) {
@@ -373,7 +330,7 @@ public class ZegoAudioRoomContainer extends LinearLayout {
         }
         leaveSeatConfirmDialog = new ConfirmDialog.Builder(getContext()).setTitle(title).setMessage(message)
             .setPositiveButton(confirmButtonName, (dialog, which) -> {
-                LiveAudioRoomManager.getInstance().seatService.leaveSeat(audioRoomSeat.seatIndex,
+                LiveAudioRoomManager.getInstance().seatService.makeSeatEmpty(audioRoomSeat.seatIndex,
                     (errorCode, errorMessage, errorKeys) -> {
                         if (errorCode == 0) {
                         }
@@ -389,12 +346,20 @@ public class ZegoAudioRoomContainer extends LinearLayout {
 
     private void showRemoveSeatUserActionDialog(AudioRoomSeat audioRoomSeat) {
         List<String> stringList = new ArrayList<>();
-        ZegoTranslationText translationText = LiveAudioRoomManager.getInstance().getTranslationText();
+        ZegoInnerText translationText = LiveAudioRoomManager.getInstance().getInnerText();
+        if (translationText != null && translationText.muteSpeakerMenuDialogButton != null) {
+            stringList.add(
+                String.format(translationText.muteSpeakerMenuDialogButton, audioRoomSeat.getUser().userName));
+        } else {
+            stringList.add(
+                getContext().getString(R.string.liveaudioroom_mute_the_seat, audioRoomSeat.getUser().userName));
+        }
         if (translationText != null && translationText.removeSpeakerMenuDialogButton != null) {
             stringList.add(
-                String.format(translationText.removeSpeakerMenuDialogButton, audioRoomSeat.uiKitUser.userName));
+                String.format(translationText.removeSpeakerMenuDialogButton, audioRoomSeat.getUser().userName));
         } else {
-            stringList.add(getContext().getString(R.string.liveaudioroom_remove_the_seat, audioRoomSeat.uiKitUser.userName));
+            stringList.add(
+                getContext().getString(R.string.liveaudioroom_remove_the_seat, audioRoomSeat.getUser().userName));
         }
         if (translationText != null && translationText.cancelMenuDialogButton != null) {
             stringList.add(translationText.cancelMenuDialogButton);
@@ -405,6 +370,8 @@ public class ZegoAudioRoomContainer extends LinearLayout {
         removeSeatActionDialog.show();
         removeSeatActionDialog.setOnDialogClickListener((dialog, which) -> {
             if (which == 0) {
+                ZegoUIKit.turnMicrophoneOn(audioRoomSeat.getUser().userID, false);
+            } else if (which == 1) {
                 showRemoveSeatUserConfirmDialog(audioRoomSeat);
             }
             dialog.dismiss();
@@ -414,15 +381,15 @@ public class ZegoAudioRoomContainer extends LinearLayout {
     }
 
     private void showRemoveSeatUserConfirmDialog(AudioRoomSeat audioRoomSeat) {
-        if (audioRoomSeat.uiKitUser == null) {
+        if (audioRoomSeat.isEmpty()) {
             return;
         }
-        String userName = audioRoomSeat.uiKitUser.userName;
+        String userName = audioRoomSeat.getUser().userName;
         String title = getContext().getString(R.string.liveaudioroom_remove_the_seat_title);
         String message = getContext().getString(R.string.liveaudioroom_remove_the_seat_message, userName);
         String cancelButtonName = getContext().getString(R.string.liveaudioroom_cancel);
         String confirmButtonName = getContext().getString(R.string.liveaudioroom_ok);
-        ZegoTranslationText translationText = LiveAudioRoomManager.getInstance().getTranslationText();
+        ZegoInnerText translationText = LiveAudioRoomManager.getInstance().getInnerText();
         if (translationText != null) {
             ZegoDialogInfo dialogInfo = translationText.removeSpeakerFromSeatDialogInfo;
             if (dialogInfo != null && dialogInfo.title != null) {
@@ -446,7 +413,8 @@ public class ZegoAudioRoomContainer extends LinearLayout {
                         if (errorCode == 0) {
 
                         } else {
-                            String errorTips = getContext().getString(R.string.liveaudioroom_remove_fail_toast, userName);
+                            String errorTips = getContext().getString(R.string.liveaudioroom_remove_fail_toast,
+                                userName);
                             if (translationText != null && translationText.removeSpeakerFailedToast != null) {
                                 errorTips = String.format(translationText.removeSpeakerFailedToast, userName);
                             }
@@ -461,61 +429,46 @@ public class ZegoAudioRoomContainer extends LinearLayout {
         clickedSeat = audioRoomSeat;
     }
 
-
-    public void onRoomPropertiesFullUpdated(List<String> updateKeys, HashMap<String, String> oldProperties,
-        HashMap<String, String> properties) {
-        for (String key : updateKeys) {
-            String oldValue = oldProperties.get(key);
-            String newValue = properties.get(key);
-            // seat [key] become empty
-            if (!TextUtils.isEmpty(oldValue) && TextUtils.isEmpty(newValue)) {
-                removeUserFromSeat(Integer.parseInt(key));
-            }
-            if (clickedSeat != null && Objects.equals(String.valueOf(clickedSeat.seatIndex), key)) {
-                if (currentDialog != null) {
-                    currentDialog.dismiss();
-                }
-            }
-        }
-        for (String key : updateKeys) {
-            String oldValue = oldProperties.get(key);
-            String newValue = properties.get(key);
-            if (!TextUtils.isEmpty(newValue)) {
-                if (!TextUtils.isEmpty(oldValue)) {
-                    removeUserFromSeat(Integer.parseInt(key));
-                }
-
-                ZegoUIKitUser user = ZegoUIKit.getUser(newValue);
-                if (user == null) {
-                    user = new ZegoUIKitUser(newValue);
-                    hasNoNameUserOnSeat = true;
-                }
-                addUserToSeat(Integer.parseInt(key), user);
-            }
-        }
-    }
-
-    public void onSeatChanged(Map<String, String> map) {
-        for (int i = 0; i < audioRoomSeatList.size(); i++) {
-            removeUserFromSeat(i);
-        }
-        for (Entry<String, String> entry : map.entrySet()) {
-            int seatIndex = Integer.parseInt(entry.getKey());
-            String userID = entry.getValue();
-            ZegoUIKitUser user = ZegoUIKit.getUser(userID);
-            if (user == null) {
-                user = new ZegoUIKitUser(userID);
-                hasNoNameUserOnSeat = true;
-            }
-            addUserToSeat(seatIndex, user);
-        }
-    }
-
     public void setSeatConfig(ZegoLiveAudioRoomSeatConfig seatConfig) {
         this.seatConfig = seatConfig;
     }
 
     public void setLockSeatList(List<Integer> lockSeatIndexesForHost) {
         this.lockSeatIndexesForHost = lockSeatIndexesForHost;
+    }
+
+    public void onSeatsChanged(Map<Integer, ZegoUIKitUser> takenSeats, List<Integer> untakenSeats) {
+        for (Integer untakenSeat : untakenSeats) {
+            removeUserFromSeat(untakenSeat);
+        }
+        for (Entry<Integer, ZegoUIKitUser> entry : takenSeats.entrySet()) {
+            Integer seatIndex = entry.getKey();
+            ZegoUIKitUser uiKitUser = entry.getValue();
+            addUserToSeat(seatIndex, uiKitUser);
+        }
+        for (Entry<Integer, ZegoUIKitUser> entry : takenSeats.entrySet()) {
+            if (TextUtils.isEmpty(entry.getValue().userName)) {
+                hasNoNameUserOnSeat = true;
+                break;
+            }
+        }
+        SeatService seatService = LiveAudioRoomManager.getInstance().seatService;
+        if (clickedSeat != null) {
+            AudioRoomSeat audioRoomSeat = seatService.tryGetAudioRoomSeat(clickedSeat.seatIndex);
+            if (audioRoomSeat.isSeatChanged()) {
+                if (currentDialog != null) {
+                    currentDialog.dismiss();
+                }
+            }
+
+        }
+    }
+
+    public void lockSeat(boolean lock) {
+        SeatService seatService = LiveAudioRoomManager.getInstance().seatService;
+        for (AudioRoomSeat audioRoomSeat : seatService.getAudioRoomSeatList()) {
+            AudioRoomSeatView seatView = getAudioRoomSeatView(audioRoomSeat);
+            seatView.setLock(lock);
+        }
     }
 }

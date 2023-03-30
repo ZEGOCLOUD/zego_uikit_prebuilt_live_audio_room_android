@@ -4,7 +4,8 @@ plugins {
 
 android {
     compileSdkVersion 32
-
+    namespace 'com.zegocloud.uikit.prebuilt.liveaudioroom'
+    
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 32

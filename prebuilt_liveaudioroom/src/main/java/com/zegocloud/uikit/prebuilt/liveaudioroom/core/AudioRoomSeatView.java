@@ -9,6 +9,7 @@ import com.google.android.flexbox.FlexboxLayout;
 import com.zegocloud.uikit.components.audiovideo.ZegoAudioVideoView;
 import com.zegocloud.uikit.components.audiovideo.ZegoAvatarAlignment;
 import com.zegocloud.uikit.components.audiovideocontainer.ZegoAudioVideoViewConfig;
+import com.zegocloud.uikit.prebuilt.liveaudioroom.R;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.databinding.LiveaudioroomItemSeatBinding;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.ZegoAudioVideoForegroundView;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
@@ -19,6 +20,8 @@ public class AudioRoomSeatView extends FrameLayout {
     private LiveaudioroomItemSeatBinding binding;
     private ZegoAudioVideoView audioVideoView;
     private AudioRoomSeat audioRoomSeat;
+    private boolean isLocked = false;
+    private ZegoLiveAudioRoomSeatConfig seatConfig;
 
     public AudioRoomSeatView(@NonNull Context context, AudioRoomSeat audioRoomSeat) {
         super(context);
@@ -42,19 +45,63 @@ public class AudioRoomSeatView extends FrameLayout {
         binding.seatAvatarContentEmpty.setVisibility(VISIBLE);
     }
 
-    public void addUserToSeat(ZegoUIKitUser uiKitUser) {
+    public void setUser(ZegoUIKitUser uiKitUser) {
+        if (uiKitUser != null) {
+            addUserToSeat(uiKitUser);
+        } else {
+            removeUserFromSeat();
+        }
+    }
+
+    private void addUserToSeat(ZegoUIKitUser uiKitUser) {
         audioVideoView.setUserID(uiKitUser.userID);
-        binding.seatAudiovideoPlaceHolder.addView(audioVideoView, new FrameLayout.LayoutParams(-1, -1));
+        if (binding.seatAudiovideoPlaceHolder.getChildCount() == 0) {
+            binding.seatAudiovideoPlaceHolder.addView(audioVideoView, new FrameLayout.LayoutParams(-1, -1));
+        }
         binding.seatAvatarContentEmpty.setVisibility(GONE);
     }
 
-    public void removeUserFromSeat() {
+    private void removeUserFromSeat() {
         audioVideoView.setUserID("");
-        binding.seatAudiovideoPlaceHolder.removeView(audioVideoView);
+        if (binding.seatAudiovideoPlaceHolder.getChildCount() != 0) {
+            binding.seatAudiovideoPlaceHolder.removeView(audioVideoView);
+        }
         binding.seatAvatarContentEmpty.setVisibility(VISIBLE);
     }
 
+    public void setLock(boolean lock) {
+        isLocked = lock;
+        setLockInner(lock);
+    }
+
+    public boolean isLocked() {
+        return isLocked;
+    }
+
+    public AudioRoomSeat getAudioRoomSeat() {
+        return audioRoomSeat;
+    }
+
+    private void setLockInner(boolean lock) {
+        if (binding != null) {
+            if (lock) {
+                if (seatConfig != null && seatConfig.closeIcon != null) {
+                    binding.seatStateLock.setImageDrawable(seatConfig.closeIcon);
+                } else {
+                    binding.seatStateLock.setImageResource(R.drawable.audioroom_icon_lock_seat);
+                }
+            } else {
+                if (seatConfig != null && seatConfig.openIcon != null) {
+                    binding.seatStateLock.setImageDrawable(seatConfig.openIcon);
+                } else {
+                    binding.seatStateLock.setImageResource(R.drawable.audioroom_icon_on_stage);
+                }
+            }
+        }
+    }
+
     public void setSeatConfig(ZegoLiveAudioRoomSeatConfig seatConfig) {
+        this.seatConfig = seatConfig;
         if (seatConfig == null) {
             return;
         }

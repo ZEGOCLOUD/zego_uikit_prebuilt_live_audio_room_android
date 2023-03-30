@@ -13,6 +13,7 @@
   <string name="liveaudioroom_take_the_seat">Take the seat</string>
   <string name="liveaudioroom_leave_the_seat">Leave the seat</string>
   <string name="liveaudioroom_remove_the_seat">Remove %s from seat</string>
+  <string name="liveaudioroom_mute_the_seat">Mute %s </string>
   <string name="liveaudioroom_remove_the_seat_title">Remove the speaker</string>
   <string name="liveaudioroom_remove_the_seat_message">Are you sure to remove %s from the seat?</string>
   <string name="liveaudioroom_leave_the_seat_message">Are you sure to leave the seat?</string>
@@ -22,6 +23,8 @@
   <string name="liveaudioroom_stop_room_ok">Stop it</string>
   <string name="liveaudioroom_remove_fail_toast">Failed to remove %s from seat</string>
   <string name="liveaudioroom_ok">OK</string>
+  <string name="liveaudioroom_end">End</string>
 
-
+  <string name="liveaudioroom_agree">Agree</string>
+  <string name="liveaudioroom_disagree">Disagree</string>
 </resources>
