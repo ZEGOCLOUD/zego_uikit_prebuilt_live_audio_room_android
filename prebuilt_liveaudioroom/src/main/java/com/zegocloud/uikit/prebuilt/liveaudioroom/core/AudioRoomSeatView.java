@@ -43,6 +43,10 @@ public class AudioRoomSeatView extends FrameLayout {
         audioVideoView.setAvatarAlignment(ZegoAvatarAlignment.START);
         audioVideoView.setSoundWaveColor(Color.parseColor("#0055FF"));
         binding.seatAvatarContentEmpty.setVisibility(VISIBLE);
+
+        if (seatConfig != null && seatConfig.openIcon != null) {
+            binding.seatStateLock.setImageDrawable(seatConfig.openIcon);
+        }
     }
 
     public void setUser(ZegoUIKitUser uiKitUser) {

@@ -47,6 +47,7 @@ import com.zegocloud.uikit.service.defines.ZegoTurnOnYourMicrophoneRequestListen
 import com.zegocloud.uikit.service.defines.ZegoUIKitPluginCallback;
 import com.zegocloud.uikit.service.defines.ZegoUIKitSignalingPluginRoomAttributesOperatedCallback;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
+import com.zegocloud.uikit.service.defines.ZegoUserCountOrPropertyChangedListener;
 import com.zegocloud.uikit.service.defines.ZegoUserUpdateListener;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -190,6 +191,16 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
     private void onRoomJoinSucceed() {
         Log.w(ZegoUIKit.TAG, "onRoomJoinSucceed() called");
         initListeners();
+
+        ZegoUIKit.addUserCountOrPropertyChangedListener(new ZegoUserCountOrPropertyChangedListener() {
+            @Override
+            public void onUserCountOrPropertyChanged(List<ZegoUIKitUser> userList) {
+                ZegoUserCountOrPropertyChangedListener listener = getListenerInfo().userCountOrPropertyChangedListener;
+                if (listener != null) {
+                    listener.onUserCountOrPropertyChanged(userList);
+                }
+            }
+        });
 
         LiveAudioRoomManager.getInstance().roleService.queryUserInRoomAttribute();
 
@@ -677,6 +688,7 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
         protected ZegoSeatTakingRequestHostListener hostListener;
         protected ZegoSeatsClosedListener seatsLockedListener;
         protected ZegoSeatsChangedListener seatsChangedListener;
+        protected ZegoUserCountOrPropertyChangedListener userCountOrPropertyChangedListener;
     }
 
     ListenerInfo getListenerInfo() {
@@ -695,15 +707,19 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
         getListenerInfo().audienceListener = l;
     }
 
+    public void setUserCountOrPropertyChangedListener(ZegoUserCountOrPropertyChangedListener l) {
+        getListenerInfo().userCountOrPropertyChangedListener = l;
+    }
+
     public void setSeatTakingRequestHostListener(ZegoSeatTakingRequestHostListener l) {
         getListenerInfo().hostListener = l;
     }
 
-    public void setSeatChangedListener(ZegoSeatsChangedListener l) {
+    public void setSeatsChangedListener(ZegoSeatsChangedListener l) {
         getListenerInfo().seatsChangedListener = l;
     }
 
-    public void setSeatsLockedListener(ZegoSeatsClosedListener l) {
+    public void setSeatsClosedListener(ZegoSeatsClosedListener l) {
         getListenerInfo().seatsLockedListener = l;
     }
 
