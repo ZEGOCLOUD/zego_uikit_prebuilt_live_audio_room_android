@@ -190,8 +190,6 @@ public class BottomMenuBar extends LinearLayout {
         moreDialog.setHideChildren(hideList);
     }
 
-    private static final String TAG = "BottomMenuBar";
-
     private void notifyBottomBarViewListChanged() {
         removeAllChildViews();
         showList.clear();

@@ -251,8 +251,6 @@ public class SeatService {
         return uikitRoomProperties.containsKey("lockseat");
     }
 
-    private static final String TAG = "SeatService";
-
     public void onRTCRoomPropertyUpdated(String key, String oldValue, String newValue) {
         uikitRoomProperties.put(key, newValue);
         if ("lockseat".equals(key)) {

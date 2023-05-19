@@ -74,8 +74,6 @@ public class RoleService {
         return userRole;
     }
 
-    private static final String TAG = "RoleService";
-
     void onSignalRoomPropertiesFullUpdated(List<String> updateKeys, HashMap<String, String> oldProperties,
         HashMap<String, String> properties) {
 

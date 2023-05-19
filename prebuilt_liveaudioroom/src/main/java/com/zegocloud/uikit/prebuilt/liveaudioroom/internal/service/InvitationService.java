@@ -17,8 +17,6 @@ public class InvitationService {
     private List<OutgoingInvitationListener> outgoingInvitationListenerList = new ArrayList<>();
     private List<IncomingInvitationListener> incomingInvitationListenerList = new ArrayList<>();
 
-    private static final String TAG = "InvitationService";
-
     public void clearInvitations() {
         zegoInvitationMap.clear();
     }

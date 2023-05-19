@@ -44,7 +44,6 @@ import java.util.Objects;
 
 public class LiveAudioRoomMemberList extends BottomSheetDialog {
 
-    private static final String TAG = "LiveAudioRoomMemberList";
     private LiveaudioroomLayoutMemberlistBinding binding;
     private ZegoMemberListConfig memberListConfig;
     private ZegoUserUpdateListener userUpdateListener;
