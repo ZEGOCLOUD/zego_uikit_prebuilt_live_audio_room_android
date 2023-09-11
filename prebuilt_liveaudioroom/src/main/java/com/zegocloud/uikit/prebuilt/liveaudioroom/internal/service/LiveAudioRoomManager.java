@@ -87,7 +87,7 @@ public class LiveAudioRoomManager {
 
             @Override
             public void onInvitationCanceled(ZegoUIKitUser inviter, String data) {
-                invitationService.onInvitationCancelled(inviter, data);
+                invitationService.onInvitationCanceled(inviter, data);
             }
         });
         ZegoUIKit.addRoomPropertyUpdateListener(new ZegoRoomPropertyUpdateListener() {

@@ -133,7 +133,7 @@ public class InvitationService {
         }
     }
 
-    public void onInvitationCancelled(ZegoUIKitUser inviter, String data) {
+    public void onInvitationCanceled(ZegoUIKitUser inviter, String data) {
         LiveAudioRoomInvitation liveAudioRoomInvitation = getInvitation(inviter.userID,
             ZegoUIKit.getLocalUser().userID);
         if (liveAudioRoomInvitation != null) {
