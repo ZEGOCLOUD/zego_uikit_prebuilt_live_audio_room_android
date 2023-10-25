@@ -10,6 +10,7 @@ import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoLiveAudioRoomSeatConf
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoMenuBarButtonName;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoInnerText;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoTranslationText;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -23,16 +24,16 @@ public class ZegoUIKitPrebuiltLiveAudioRoomConfig {
     public int takeSeatIndexWhenJoining = -1;
     public boolean turnOnMicrophoneWhenJoining = false;
     public boolean useSpeakerWhenJoining = true;
-    public ZegoBottomMenuBarConfig bottomMenuBarConfig = new ZegoBottomMenuBarConfig(
+    public ZegoBottomMenuBarConfig bottomMenuBarConfig = new ZegoBottomMenuBarConfig(new ArrayList<>(
         Arrays.asList(ZegoMenuBarButtonName.TOGGLE_MICROPHONE_BUTTON, ZegoMenuBarButtonName.SHOW_MEMBER_LIST_BUTTON,
-            ZegoMenuBarButtonName.CLOSE_SEAT_BUTTON),
-        Arrays.asList(ZegoMenuBarButtonName.TOGGLE_MICROPHONE_BUTTON, ZegoMenuBarButtonName.SHOW_MEMBER_LIST_BUTTON),
-        Collections.singletonList(ZegoMenuBarButtonName.APPLY_TO_TAKE_SEAT_BUTTON));
+            ZegoMenuBarButtonName.CLOSE_SEAT_BUTTON)), new ArrayList<>(
+        Arrays.asList(ZegoMenuBarButtonName.TOGGLE_MICROPHONE_BUTTON, ZegoMenuBarButtonName.SHOW_MEMBER_LIST_BUTTON)),
+        new ArrayList<>(Collections.singletonList(ZegoMenuBarButtonName.APPLY_TO_TAKE_SEAT_BUTTON)));
     public ZegoDialogInfo confirmDialogInfo;
 
 
     /**
-     * @deprecated  use {@link ZegoUIKitPrebuiltLiveAudioRoomConfig#innerText} instead
+     * @deprecated use {@link ZegoUIKitPrebuiltLiveAudioRoomConfig#innerText} instead
      */
     @Deprecated
     public ZegoTranslationText translationText = new ZegoTranslationText();

@@ -232,11 +232,13 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
             } else {
                 if (config.turnOnMicrophoneWhenJoining) {
                     requestPermissionIfNeeded((allGranted, grantedList, deniedList) -> {
-                        if (grantedList.contains(permission.RECORD_AUDIO)) {
-                            if (config.turnOnMicrophoneWhenJoining) {
-                                String userID = ZegoUIKit.getLocalUser().userID;
+                        String userID = ZegoUIKit.getLocalUser().userID;
+                        if (config.turnOnMicrophoneWhenJoining) {
+                            if (grantedList.contains(permission.RECORD_AUDIO)) {
                                 ZegoUIKit.turnMicrophoneOn(userID, true);
                             }
+                        } else {
+                            ZegoUIKit.turnMicrophoneOn(userID, false);
                         }
                     });
                 }

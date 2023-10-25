@@ -53,10 +53,12 @@ public class AudioRoomSeatView extends FrameLayout {
             @Override
             public View onUserIDUpdated(ViewGroup parent, ZegoUIKitUser uiKitUser) {
                 ImageView imageView = new ImageView(getContext());
-                String avatarUrl = uiKitUser.inRoomAttributes.get("avatar");
-                if (!TextUtils.isEmpty(avatarUrl)) {
-                    RequestOptions requestOptions = new RequestOptions().circleCrop();
-                    Glide.with(getContext()).load(avatarUrl).apply(requestOptions).into(imageView);
+                if (uiKitUser.inRoomAttributes != null) {
+                    String avatarUrl = uiKitUser.inRoomAttributes.get("avatar");
+                    if (!TextUtils.isEmpty(avatarUrl)) {
+                        RequestOptions requestOptions = new RequestOptions().circleCrop();
+                        Glide.with(getContext()).load(avatarUrl).apply(requestOptions).into(imageView);
+                    }
                 }
                 return imageView;
             }
