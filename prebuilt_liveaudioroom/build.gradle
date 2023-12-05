@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    compileSdkVersion 32
+    compileSdkVersion 34
     namespace 'com.zegocloud.uikit.prebuilt.liveaudioroom'
     
     defaultConfig {
@@ -34,13 +34,13 @@ android {
 
 dependencies {
 
-    implementation 'androidx.appcompat:appcompat:1.5.1'
-    implementation 'com.google.android.material:material:1.6.1'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.10.0'
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
-    api 'com.github.ZEGOCLOUD:zego_uikit_signaling_plugin_android:[2.2.0,)'
-    api 'com.github.ZEGOCLOUD:zego_uikit_android:[2.6.0,)'
+    api 'com.github.ZEGOCLOUD:zego_uikit_signaling_plugin_android:alpha-2.3.0'
+    api 'com.github.ZEGOCLOUD:zego_uikit_android:alpha-2.7.0'
 
     api 'com.guolindev.permissionx:permissionx:1.7.1'
 
