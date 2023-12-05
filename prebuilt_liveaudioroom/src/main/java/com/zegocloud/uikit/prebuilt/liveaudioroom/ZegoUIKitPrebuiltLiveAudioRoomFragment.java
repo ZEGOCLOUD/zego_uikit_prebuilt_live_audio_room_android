@@ -56,6 +56,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import timber.log.Timber;
 
 public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
 
@@ -185,11 +186,11 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
     }
 
     private void onRoomJoinFailed() {
-        Log.w(ZegoUIKit.TAG, "onRoomJoinFailed() called");
+        Timber.w("onRoomJoinFailed() called");
     }
 
     private void onRoomJoinSucceed() {
-        Log.w(ZegoUIKit.TAG, "onRoomJoinSucceed() called");
+        Timber.d("onRoomJoinSucceed() called");
         initListeners();
 
         ZegoUIKit.addUserCountOrPropertyChangedListener(new ZegoUserCountOrPropertyChangedListener() {
