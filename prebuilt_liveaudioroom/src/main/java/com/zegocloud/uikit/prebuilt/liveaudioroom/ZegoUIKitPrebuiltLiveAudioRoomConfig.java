@@ -10,6 +10,7 @@ import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoLiveAudioRoomSeatConf
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoMenuBarButtonName;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoInnerText;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoTranslationText;
+import com.zegocloud.uikit.service.defines.ZegoMeRemovedFromRoomListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -45,6 +46,7 @@ public class ZegoUIKitPrebuiltLiveAudioRoomConfig {
     public String userAvatarUrl;
     public Map<String, String> userInRoomAttributes;
     public boolean closeSeatsWhenJoin = true;
+    public transient ZegoMeRemovedFromRoomListener removedFromRoomListener;
 
     public static ZegoUIKitPrebuiltLiveAudioRoomConfig host() {
         ZegoUIKitPrebuiltLiveAudioRoomConfig config = new ZegoUIKitPrebuiltLiveAudioRoomConfig();

@@ -75,13 +75,10 @@ public class InvitationService {
         LiveAudioRoomInvitation liveAudioRoomInvitation = getInvitation(inviter.userID, invitee.userID);
         if (liveAudioRoomInvitation != null) {
             liveAudioRoomInvitation.setState(LiveAudioRoomInviteState.RECV_TIME_OUT);
-        }
 
-        for (IncomingInvitationListener inComingInvitationListener : incomingInvitationListenerList) {
-            inComingInvitationListener.onReceiveInvitationButResponseTimeout(inviter);
-        }
-
-        if (liveAudioRoomInvitation != null) {
+            for (IncomingInvitationListener inComingInvitationListener : incomingInvitationListenerList) {
+                inComingInvitationListener.onReceiveInvitationButResponseTimeout(inviter);
+            }
             zegoInvitationMap.remove(liveAudioRoomInvitation.getInvitationID());
         }
     }
@@ -91,13 +88,10 @@ public class InvitationService {
             invitees.get(0).userID);
         if (liveAudioRoomInvitation != null) {
             liveAudioRoomInvitation.setState(LiveAudioRoomInviteState.SEND_TIME_OUT);
-        }
 
-        for (OutgoingInvitationListener outgoingInvitationListener : outgoingInvitationListenerList) {
-            outgoingInvitationListener.onSendInvitationButReceiveResponseTimeout(invitees.get(0), data);
-        }
-
-        if (liveAudioRoomInvitation != null) {
+            for (OutgoingInvitationListener outgoingInvitationListener : outgoingInvitationListenerList) {
+                outgoingInvitationListener.onSendInvitationButReceiveResponseTimeout(invitees.get(0), data);
+            }
             zegoInvitationMap.remove(liveAudioRoomInvitation.getInvitationID());
         }
     }
@@ -107,12 +101,10 @@ public class InvitationService {
             invitee.userID);
         if (liveAudioRoomInvitation != null) {
             liveAudioRoomInvitation.setState(LiveAudioRoomInviteState.SEND_IS_ACCEPTED);
-        }
 
-        for (OutgoingInvitationListener outgoingInvitationListener : outgoingInvitationListenerList) {
-            outgoingInvitationListener.onSendInvitationAndIsAccepted(invitee, data);
-        }
-        if (liveAudioRoomInvitation != null) {
+            for (OutgoingInvitationListener outgoingInvitationListener : outgoingInvitationListenerList) {
+                outgoingInvitationListener.onSendInvitationAndIsAccepted(invitee, data);
+            }
             zegoInvitationMap.remove(liveAudioRoomInvitation.getInvitationID());
         }
     }
@@ -122,13 +114,9 @@ public class InvitationService {
             invitee.userID);
         if (liveAudioRoomInvitation != null) {
             liveAudioRoomInvitation.setState(LiveAudioRoomInviteState.SEND_IS_REJECTED);
-        }
-
-        for (OutgoingInvitationListener outgoingInvitationListener : outgoingInvitationListenerList) {
-            outgoingInvitationListener.onSendInvitationButIsRejected(invitee, data);
-        }
-
-        if (liveAudioRoomInvitation != null) {
+            for (OutgoingInvitationListener outgoingInvitationListener : outgoingInvitationListenerList) {
+                outgoingInvitationListener.onSendInvitationButIsRejected(invitee, data);
+            }
             zegoInvitationMap.remove(liveAudioRoomInvitation.getInvitationID());
         }
     }
@@ -138,13 +126,9 @@ public class InvitationService {
             ZegoUIKit.getLocalUser().userID);
         if (liveAudioRoomInvitation != null) {
             liveAudioRoomInvitation.setState(LiveAudioRoomInviteState.RECV_IS_CANCELLED);
-        }
-
-        for (IncomingInvitationListener invitationListener : incomingInvitationListenerList) {
-            invitationListener.onReceiveInvitationButIsCancelled(inviter, data);
-        }
-
-        if (liveAudioRoomInvitation != null) {
+            for (IncomingInvitationListener invitationListener : incomingInvitationListenerList) {
+                invitationListener.onReceiveInvitationButIsCancelled(inviter, data);
+            }
             zegoInvitationMap.remove(liveAudioRoomInvitation.getInvitationID());
         }
     }
