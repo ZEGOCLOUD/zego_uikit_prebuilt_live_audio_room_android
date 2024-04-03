@@ -52,20 +52,8 @@ public class LiveAudioRoomManager {
         return prebuiltLiveAudioRoomConfig;
     }
 
-    public void initAndLoginUser(Application application, long appID, String appSign, String userID, String userName) {
+    public void init(Application application, long appID, String appSign) {
         ZegoUIKit.init(application, appID, appSign, ZegoScenario.GENERAL);
-        ZegoUIKit.login(userID, userName);
-        prebuiltLiveAudioRoomConfig.innerText.takeSeatMenuDialogButton = prebuiltLiveAudioRoomConfig.translationText.takeSeatMenuDialogButton;
-        prebuiltLiveAudioRoomConfig.innerText.removeSpeakerMenuDialogButton = prebuiltLiveAudioRoomConfig.translationText.removeSpeakerMenuDialogButton;
-        prebuiltLiveAudioRoomConfig.innerText.leaveSeatMenuDialogButton = prebuiltLiveAudioRoomConfig.translationText.leaveSeatMenuDialogButton;
-        prebuiltLiveAudioRoomConfig.innerText.cancelMenuDialogButton = prebuiltLiveAudioRoomConfig.translationText.cancelMenuDialogButton;
-        prebuiltLiveAudioRoomConfig.innerText.memberListTitle = prebuiltLiveAudioRoomConfig.translationText.memberListTitle;
-        prebuiltLiveAudioRoomConfig.innerText.removeSpeakerFailedToast = prebuiltLiveAudioRoomConfig.translationText.removeSpeakerFailedToast;
-        prebuiltLiveAudioRoomConfig.innerText.leaveSeatDialogInfo = prebuiltLiveAudioRoomConfig.translationText.leaveSeatDialogInfo;
-        prebuiltLiveAudioRoomConfig.innerText.removeSpeakerFromSeatDialogInfo = prebuiltLiveAudioRoomConfig.translationText.removeSpeakerFromSeatDialogInfo;
-
-        seatService.init(prebuiltLiveAudioRoomConfig.layoutConfig);
-        roleService.init();
         ZegoUIKit.getSignalingPlugin().addInvitationListener(new ZegoUIKitSignalingPluginInvitationListener() {
 
             @Override
@@ -100,8 +88,28 @@ public class LiveAudioRoomManager {
         });
     }
 
+    public void loginUser(String userID, String userName) {
+        ZegoUIKit.login(userID, userName);
+
+        prebuiltLiveAudioRoomConfig.innerText.takeSeatMenuDialogButton = prebuiltLiveAudioRoomConfig.translationText.takeSeatMenuDialogButton;
+        prebuiltLiveAudioRoomConfig.innerText.removeSpeakerMenuDialogButton = prebuiltLiveAudioRoomConfig.translationText.removeSpeakerMenuDialogButton;
+        prebuiltLiveAudioRoomConfig.innerText.leaveSeatMenuDialogButton = prebuiltLiveAudioRoomConfig.translationText.leaveSeatMenuDialogButton;
+        prebuiltLiveAudioRoomConfig.innerText.cancelMenuDialogButton = prebuiltLiveAudioRoomConfig.translationText.cancelMenuDialogButton;
+        prebuiltLiveAudioRoomConfig.innerText.memberListTitle = prebuiltLiveAudioRoomConfig.translationText.memberListTitle;
+        prebuiltLiveAudioRoomConfig.innerText.removeSpeakerFailedToast = prebuiltLiveAudioRoomConfig.translationText.removeSpeakerFailedToast;
+        prebuiltLiveAudioRoomConfig.innerText.leaveSeatDialogInfo = prebuiltLiveAudioRoomConfig.translationText.leaveSeatDialogInfo;
+        prebuiltLiveAudioRoomConfig.innerText.removeSpeakerFromSeatDialogInfo = prebuiltLiveAudioRoomConfig.translationText.removeSpeakerFromSeatDialogInfo;
+        seatService.init(prebuiltLiveAudioRoomConfig.layoutConfig);
+        roleService.init();
+    }
+
     public ZegoInnerText getInnerText() {
         return prebuiltLiveAudioRoomConfig.innerText;
+    }
+
+    public void renewToken(String token) {
+        ZegoUIKit.renewToken(token);
+        ZegoUIKit.getSignalingPlugin().renewToken(token);
     }
 
     public void joinRoom(String userID, String userName, String roomID, JoinRoomCallback callback) {
@@ -209,8 +217,8 @@ public class LiveAudioRoomManager {
 
         ZegoUIKit.getSignalingPlugin().leaveRoom(null);
         ZegoUIKit.leaveRoom();
-//        ZegoUIKit.getSignalingPlugin().logout();
-//        ZegoUIKit.logout();
+        //        ZegoUIKit.getSignalingPlugin().logout();
+        //        ZegoUIKit.logout();
     }
 
     public void setPrebuiltUICallBack(PrebuiltUICallBack uiCallBack) {

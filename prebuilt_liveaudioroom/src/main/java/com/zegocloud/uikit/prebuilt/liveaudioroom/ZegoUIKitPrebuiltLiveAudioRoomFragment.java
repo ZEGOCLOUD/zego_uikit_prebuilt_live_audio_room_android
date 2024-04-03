@@ -95,6 +95,21 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
         return fragment;
     }
 
+    public static ZegoUIKitPrebuiltLiveAudioRoomFragment newInstanceWithToken(long appID, String token, String userID,
+        String userName, String roomID, ZegoUIKitPrebuiltLiveAudioRoomConfig config) {
+        ZegoUIKitPrebuiltLiveAudioRoomFragment fragment = new ZegoUIKitPrebuiltLiveAudioRoomFragment();
+        Bundle bundle = new Bundle();
+        bundle.putLong("appID", appID);
+        bundle.putString("appToken", token);
+        bundle.putString("userID", userID);
+        bundle.putString("userName", userName);
+        bundle.putString("roomID", roomID);
+        fragment.setArguments(bundle);
+
+        LiveAudioRoomManager.getInstance().setPrebuiltConfig(config);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,10 +120,15 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
         String appSign = arguments.getString("appSign");
         String userName = arguments.getString("userName");
         String userID = arguments.getString("userID");
+        String token = arguments.getString("appToken");
 
         if (appID != 0) {
             Application application = requireActivity().getApplication();
-            LiveAudioRoomManager.getInstance().initAndLoginUser(application, appID, appSign, userID, userName);
+            LiveAudioRoomManager.getInstance().init(application, appID, appSign);
+            if (!TextUtils.isEmpty(token)) {
+                LiveAudioRoomManager.getInstance().renewToken(token);
+            }
+            LiveAudioRoomManager.getInstance().loginUser(userID, userName);
         }
         onBackPressedCallback = new OnBackPressedCallback(true) {
             @Override
