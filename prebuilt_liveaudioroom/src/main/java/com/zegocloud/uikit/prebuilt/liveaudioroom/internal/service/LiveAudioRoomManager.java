@@ -107,11 +107,6 @@ public class LiveAudioRoomManager {
         return prebuiltLiveAudioRoomConfig.innerText;
     }
 
-    public void renewToken(String token) {
-        ZegoUIKit.renewToken(token);
-        ZegoUIKit.getSignalingPlugin().renewToken(token);
-    }
-
     public void joinRoom(String userID, String userName, String roomID, JoinRoomCallback callback) {
         ZegoUIKit.setAudioVideoResourceMode(ZegoAudioVideoResourceMode.RTC_ONLY);
         signalRoomPropertyListener = new ZegoUIKitSignalingPluginRoomPropertyUpdateListener() {

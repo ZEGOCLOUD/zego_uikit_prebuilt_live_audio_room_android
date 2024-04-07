@@ -126,7 +126,7 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
             Application application = requireActivity().getApplication();
             LiveAudioRoomManager.getInstance().init(application, appID, appSign);
             if (!TextUtils.isEmpty(token)) {
-                LiveAudioRoomManager.getInstance().renewToken(token);
+                ZegoUIKit.renewToken(token);
             }
             LiveAudioRoomManager.getInstance().loginUser(userID, userName);
         }
