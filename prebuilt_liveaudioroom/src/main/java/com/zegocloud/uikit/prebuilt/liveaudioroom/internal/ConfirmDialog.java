@@ -13,7 +13,9 @@ import android.view.WindowManager;
 
 import androidx.annotation.StringRes;
 
+import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoTranslationText;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.databinding.LiveaudioroomDialogConfirmBinding;
+import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.service.LiveAudioRoomManager;
 
 public class ConfirmDialog extends Dialog {
 
@@ -60,11 +62,20 @@ public class ConfirmDialog extends Dialog {
         if (!TextUtils.isEmpty(contentText)) {
             binding.confirmContent.setText(contentText);
         }
+        ZegoTranslationText translationText = LiveAudioRoomManager.getInstance().getTranslationText();
         if (!TextUtils.isEmpty(okText)) {
             binding.confirmOk.setText(okText);
+        } else {
+            if (translationText != null) {
+                binding.confirmOk.setText(translationText.ok);
+            }
         }
         if (!TextUtils.isEmpty(cancelText)) {
             binding.confirmCancel.setText(cancelText);
+        } else {
+            if (translationText != null) {
+                binding.confirmOk.setText(translationText.cancel);
+            }
         }
         if (negativeView == null) {
             binding.confirmCancel.setOnClickListener(new View.OnClickListener() {

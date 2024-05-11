@@ -15,6 +15,7 @@ import com.zegocloud.uikit.plugin.common.PluginCallbackListener;
 import com.zegocloud.uikit.plugin.invitation.components.ZegoStartInvitationButton;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.R;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoInnerText;
+import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoTranslationText;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.service.LiveAudioRoomInvitationType;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.service.LiveAudioRoomManager;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
@@ -42,7 +43,7 @@ public class ZegoRequestTakeSeatButton extends ZegoStartInvitationButton {
         super.initView();
         type = LiveAudioRoomInvitationType.REQUEST_TAKE_SEAT.getValue();
         setBackgroundResource(R.drawable.liveaudioroom_bg_cohost_btn);
-        ZegoInnerText translationText = LiveAudioRoomManager.getInstance().getInnerText();
+        ZegoTranslationText translationText = LiveAudioRoomManager.getInstance().getTranslationText();
         if (translationText != null) {
             setText(translationText.applyToTakeSeatButton);
         }

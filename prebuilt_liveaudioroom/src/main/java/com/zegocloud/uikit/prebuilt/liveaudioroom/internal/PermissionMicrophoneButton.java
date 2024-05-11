@@ -13,6 +13,8 @@ import com.permissionx.guolindev.PermissionX;
 import com.permissionx.guolindev.callback.RequestCallback;
 import com.zegocloud.uikit.components.audiovideo.ZegoToggleMicrophoneButton;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.R;
+import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoTranslationText;
+import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.service.LiveAudioRoomManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -61,15 +63,36 @@ public class PermissionMicrophoneButton extends ZegoToggleMicrophoneButton {
             requestCallback.onResult(true, permissions, new ArrayList<>());
             return;
         }
-
+        ZegoTranslationText translationText = LiveAudioRoomManager.getInstance().getTranslationText();
         PermissionX.init((FragmentActivity) getContext()).permissions(permission.RECORD_AUDIO)
             .onExplainRequestReason((scope, deniedList) -> {
-                String message = getContext().getString(R.string.liveaudioroom_permission_explain_mic);
-                scope.showRequestReasonDialog(deniedList, message, getContext().getString(R.string.liveaudioroom_ok));
+                String ok = "";
+                String settings = "";
+                String cancel = "";
+                String explainMic = "";
+                String settingsMic = "";
+                if (translationText != null) {
+                    ok = translationText.ok;
+                    settings = translationText.settings;
+                    cancel = translationText.cancel;
+                    explainMic = translationText.explainMic;
+                    settingsMic = translationText.settingsMic;
+                }
+                scope.showRequestReasonDialog(deniedList, explainMic, ok);
             }).onForwardToSettings((scope, deniedList) -> {
-                String message = getContext().getString(R.string.liveaudioroom_settings_mic);
-                scope.showForwardToSettingsDialog(deniedList, message, getContext().getString(R.string.liveaudioroom_settings),
-                    getContext().getString(R.string.liveaudioroom_cancel));
+                String ok = "";
+                String settings = "";
+                String cancel = "";
+                String explainMic = "";
+                String settingsMic = "";
+                if (translationText != null) {
+                    ok = translationText.ok;
+                    settings = translationText.settings;
+                    cancel = translationText.cancel;
+                    explainMic = translationText.explainMic;
+                    settingsMic = translationText.settingsMic;
+                }
+                scope.showForwardToSettingsDialog(deniedList, settingsMic, settings, cancel);
             }).request(new RequestCallback() {
                 @Override
                 public void onResult(boolean allGranted, @NonNull List<String> grantedList,

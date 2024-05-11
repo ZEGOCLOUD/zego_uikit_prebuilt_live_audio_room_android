@@ -63,7 +63,7 @@ public class AudioRoomSeatView extends FrameLayout {
                 return imageView;
             }
         });
-        binding.seatAvatarContentEmpty.setVisibility(VISIBLE);
+//        binding.seatAvatarContentEmpty.setVisibility(VISIBLE);
 
         if (seatConfig != null && seatConfig.openIcon != null) {
             binding.seatStateLock.setImageDrawable(seatConfig.openIcon);
@@ -83,7 +83,7 @@ public class AudioRoomSeatView extends FrameLayout {
         if (binding.seatAudiovideoPlaceHolder.getChildCount() == 0) {
             binding.seatAudiovideoPlaceHolder.addView(audioVideoView, new FrameLayout.LayoutParams(-1, -1));
         }
-        binding.seatAvatarContentEmpty.setVisibility(GONE);
+//        binding.seatAvatarContentEmpty.setVisibility(GONE);
     }
 
     private void removeUserFromSeat() {
@@ -91,7 +91,7 @@ public class AudioRoomSeatView extends FrameLayout {
         if (binding.seatAudiovideoPlaceHolder.getChildCount() != 0) {
             binding.seatAudiovideoPlaceHolder.removeView(audioVideoView);
         }
-        binding.seatAvatarContentEmpty.setVisibility(VISIBLE);
+//        binding.seatAvatarContentEmpty.setVisibility(VISIBLE);
     }
 
     public void setLock(boolean lock) {

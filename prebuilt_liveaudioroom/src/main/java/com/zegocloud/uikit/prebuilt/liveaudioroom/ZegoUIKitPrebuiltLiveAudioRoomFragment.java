@@ -23,8 +23,8 @@ import com.zegocloud.uikit.ZegoUIKit;
 import com.zegocloud.uikit.plugin.adapter.utils.GenericUtils;
 import com.zegocloud.uikit.plugin.common.PluginCallbackListener;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoDialogInfo;
-import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoInnerText;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoLiveAudioRoomRole;
+import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoTranslationText;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.databinding.LiveaudioroomFragmentLiveaudioroomBinding;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.ConfirmDialog;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.PrebuiltUICallBack;
@@ -346,7 +346,7 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
                     LiveAudioRoomInvitation invitation = LiveAudioRoomManager.getInstance().invitationService.getInvitation(
                         inviter.userID, ZegoUIKit.getLocalUser().userID);
                     if (invitation != null && invitation.isTakeSeatInvite()) {
-                        ZegoInnerText translationText = LiveAudioRoomManager.getInstance().getInnerText();
+                        ZegoTranslationText translationText = LiveAudioRoomManager.getInstance().getTranslationText();
                         if (translationText != null) {
                             ZegoDialogInfo dialogInfo = translationText.receivedCoHostInvitationDialogInfo;
                             if (dialogInfo != null) {
@@ -604,30 +604,21 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
     }
 
     private ZegoDialogInfo getDialogInfo() {
-        ZegoDialogInfo dialogInfo = new ZegoDialogInfo();
-
         ZegoUIKitPrebuiltLiveAudioRoomConfig config = LiveAudioRoomManager.getInstance().getPrebuiltConfig();
-        if (config.confirmDialogInfo.title == null) {
-            dialogInfo.title = getString(R.string.liveaudioroom_stop_room_title);
-        } else {
-            dialogInfo.title = config.confirmDialogInfo.title;
+        ZegoTranslationText translationText = LiveAudioRoomManager.getInstance().getTranslationText();
+        if (TextUtils.isEmpty(config.confirmDialogInfo.title)) {
+            config.confirmDialogInfo.title = translationText.leaveRoomConfirmDialogInfo.title;
         }
-        if (config.confirmDialogInfo.message == null) {
-            dialogInfo.message = getString(R.string.liveaudioroom_stop_room_message);
-        } else {
-            dialogInfo.message = config.confirmDialogInfo.message;
+        if (TextUtils.isEmpty(config.confirmDialogInfo.message)) {
+            config.confirmDialogInfo.message = translationText.leaveRoomConfirmDialogInfo.message;
         }
-        if (config.confirmDialogInfo.confirmButtonName == null) {
-            dialogInfo.confirmButtonName = getString(R.string.liveaudioroom_stop_room_ok);
-        } else {
-            dialogInfo.confirmButtonName = config.confirmDialogInfo.confirmButtonName;
+        if (TextUtils.isEmpty(config.confirmDialogInfo.confirmButtonName)) {
+            config.confirmDialogInfo.confirmButtonName = translationText.leaveRoomConfirmDialogInfo.confirmButtonName;
         }
-        if (config.confirmDialogInfo.cancelButtonName == null) {
-            dialogInfo.cancelButtonName = getString(R.string.liveaudioroom_stop_room_cancel);
-        } else {
-            dialogInfo.cancelButtonName = config.confirmDialogInfo.cancelButtonName;
+        if (TextUtils.isEmpty(config.confirmDialogInfo.cancelButtonName)) {
+            config.confirmDialogInfo.cancelButtonName = translationText.leaveRoomConfirmDialogInfo.cancelButtonName;
         }
-        return dialogInfo;
+        return config.confirmDialogInfo;
     }
 
     private void requestPermissionIfNeeded(RequestCallback requestCallback) {
@@ -643,14 +634,37 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
             requestCallback.onResult(true, permissions, new ArrayList<>());
             return;
         }
+        ZegoTranslationText translationText = LiveAudioRoomManager.getInstance().getTranslationText();
+
         PermissionX.init(requireActivity()).permissions(permission.RECORD_AUDIO)
             .onExplainRequestReason((scope, deniedList) -> {
-                String message = getContext().getString(R.string.liveaudioroom_permission_explain_mic);
-                scope.showRequestReasonDialog(deniedList, message, getString(R.string.liveaudioroom_ok));
+                String ok = "";
+                String settings = "";
+                String cancel = "";
+                String explainMic = "";
+                String settingsMic = "";
+                if (translationText != null) {
+                    ok = translationText.ok;
+                    settings = translationText.settings;
+                    cancel = translationText.cancel;
+                    explainMic = translationText.explainMic;
+                    settingsMic = translationText.settingsMic;
+                }
+                scope.showRequestReasonDialog(deniedList, explainMic, ok);
             }).onForwardToSettings((scope, deniedList) -> {
-                String message = getContext().getString(R.string.liveaudioroom_settings_mic);
-                scope.showForwardToSettingsDialog(deniedList, message, getString(R.string.liveaudioroom_settings),
-                    getString(R.string.liveaudioroom_cancel));
+                String ok = "";
+                String settings = "";
+                String cancel = "";
+                String explainMic = "";
+                String settingsMic = "";
+                if (translationText != null) {
+                    ok = translationText.ok;
+                    settings = translationText.settings;
+                    cancel = translationText.cancel;
+                    explainMic = translationText.explainMic;
+                    settingsMic = translationText.settingsMic;
+                }
+                scope.showForwardToSettingsDialog(deniedList, settingsMic, settings, cancel);
             }).request(new RequestCallback() {
                 @Override
                 public void onResult(boolean allGranted, @NonNull List<String> grantedList,

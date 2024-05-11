@@ -2,7 +2,7 @@ package com.zegocloud.uikit.prebuilt.liveaudioroom.internal.service;
 
 import com.zegocloud.uikit.ZegoUIKit;
 import com.zegocloud.uikit.plugin.common.PluginCallbackListener;
-import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoInnerText;
+import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoTranslationText;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -177,7 +177,7 @@ public class InvitationService {
                     invitation.setState(LiveAudioRoomInviteState.SEND_NEW);
                     zegoInvitationMap.put(invitation.getInvitationID(), invitation);
                 }
-                ZegoInnerText translationText = LiveAudioRoomManager.getInstance().getInnerText();
+                ZegoTranslationText translationText = LiveAudioRoomManager.getInstance().getTranslationText();
                 if (translationText != null && translationText.sendRequestTakeSeatToast != null) {
                     result.put("message", translationText.sendRequestTakeSeatToast);
                 }

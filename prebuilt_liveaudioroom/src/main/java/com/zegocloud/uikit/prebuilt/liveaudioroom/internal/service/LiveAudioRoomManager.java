@@ -3,7 +3,7 @@ package com.zegocloud.uikit.prebuilt.liveaudioroom.internal.service;
 import android.app.Application;
 import com.zegocloud.uikit.ZegoUIKit;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.ZegoUIKitPrebuiltLiveAudioRoomConfig;
-import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoInnerText;
+import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoTranslationText;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.PrebuiltUICallBack;
 import com.zegocloud.uikit.service.defines.ZegoAudioVideoResourceMode;
 import com.zegocloud.uikit.service.defines.ZegoRoomPropertyUpdateListener;
@@ -18,6 +18,7 @@ import com.zegocloud.uikit.service.defines.ZegoUserUpdateListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import timber.log.Timber;
 
 public class LiveAudioRoomManager {
 
@@ -46,6 +47,9 @@ public class LiveAudioRoomManager {
 
     public void setPrebuiltConfig(ZegoUIKitPrebuiltLiveAudioRoomConfig config) {
         this.prebuiltLiveAudioRoomConfig = config;
+        if (config.translationText != null) {
+            ZegoUIKit.setLanguage(config.translationText.getLanguage());
+        }
     }
 
     public ZegoUIKitPrebuiltLiveAudioRoomConfig getPrebuiltConfig() {
@@ -91,20 +95,15 @@ public class LiveAudioRoomManager {
     public void loginUser(String userID, String userName) {
         ZegoUIKit.login(userID, userName);
 
-        prebuiltLiveAudioRoomConfig.innerText.takeSeatMenuDialogButton = prebuiltLiveAudioRoomConfig.translationText.takeSeatMenuDialogButton;
-        prebuiltLiveAudioRoomConfig.innerText.removeSpeakerMenuDialogButton = prebuiltLiveAudioRoomConfig.translationText.removeSpeakerMenuDialogButton;
-        prebuiltLiveAudioRoomConfig.innerText.leaveSeatMenuDialogButton = prebuiltLiveAudioRoomConfig.translationText.leaveSeatMenuDialogButton;
-        prebuiltLiveAudioRoomConfig.innerText.cancelMenuDialogButton = prebuiltLiveAudioRoomConfig.translationText.cancelMenuDialogButton;
-        prebuiltLiveAudioRoomConfig.innerText.memberListTitle = prebuiltLiveAudioRoomConfig.translationText.memberListTitle;
-        prebuiltLiveAudioRoomConfig.innerText.removeSpeakerFailedToast = prebuiltLiveAudioRoomConfig.translationText.removeSpeakerFailedToast;
-        prebuiltLiveAudioRoomConfig.innerText.leaveSeatDialogInfo = prebuiltLiveAudioRoomConfig.translationText.leaveSeatDialogInfo;
-        prebuiltLiveAudioRoomConfig.innerText.removeSpeakerFromSeatDialogInfo = prebuiltLiveAudioRoomConfig.translationText.removeSpeakerFromSeatDialogInfo;
+        prebuiltLiveAudioRoomConfig.translationText.copyFromInnerTextIfNotCustomized(
+            prebuiltLiveAudioRoomConfig.innerText);
+
         seatService.init(prebuiltLiveAudioRoomConfig.layoutConfig);
         roleService.init();
     }
 
-    public ZegoInnerText getInnerText() {
-        return prebuiltLiveAudioRoomConfig.innerText;
+    public ZegoTranslationText getTranslationText() {
+        return prebuiltLiveAudioRoomConfig.translationText;
     }
 
     public void joinRoom(String userID, String userName, String roomID, JoinRoomCallback callback) {
@@ -112,12 +111,16 @@ public class LiveAudioRoomManager {
         signalRoomPropertyListener = new ZegoUIKitSignalingPluginRoomPropertyUpdateListener() {
             @Override
             public void onRoomPropertyUpdated(String key, String oldValue, String newValue) {
-
+                Timber.d("onRoomPropertyUpdated() called with: key = [" + key + "], oldValue = [" + oldValue
+                    + "], newValue = [" + newValue + "]");
             }
 
             @Override
             public void onRoomPropertiesFullUpdated(List<String> updateKeys, HashMap<String, String> oldProperties,
                 HashMap<String, String> properties) {
+                Timber.d(
+                    "onRoomPropertiesFullUpdated() called with: updateKeys = [" + updateKeys + "], oldProperties = ["
+                        + oldProperties + "], properties = [" + properties + "]");
                 seatService.onSignalRoomPropertiesFullUpdated(updateKeys, oldProperties, properties);
                 roleService.onSignalRoomPropertiesFullUpdated(updateKeys, oldProperties, properties);
 

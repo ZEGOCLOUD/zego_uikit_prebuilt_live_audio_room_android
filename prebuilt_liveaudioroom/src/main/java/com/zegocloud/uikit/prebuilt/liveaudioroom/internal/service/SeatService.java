@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import timber.log.Timber;
 
 public class SeatService {
 
@@ -124,13 +125,14 @@ public class SeatService {
     }
 
     public void tryTakeSeat(int seatIndex, ZegoUIKitSignalingPluginRoomAttributesOperatedCallback callback) {
+        Timber.d("tryTakeSeat() called with: seatIndex = [" + seatIndex + "], callback = [" + callback + "]");
         if (ZegoUIKit.getLocalUser() == null) {
             return;
         }
         String key = String.valueOf(seatIndex);
         String value = ZegoUIKit.getLocalUser().userID;
-        ZegoUIKit.getSignalingPlugin()
-            .updateRoomProperty(key, value, true, false, false, (errorCode, errorMessage, errorKeys) -> {
+        ZegoUIKit.getSignalingPlugin().updateRoomProperty(key, value, true, false, false, (errorCode, errorMessage, errorKeys) -> {
+                Timber.d("tryTakeSeat() result with: seatIndex = [" + seatIndex + "], callback = [" + callback + "]");
                 if (callback != null) {
                     callback.onSignalingPluginRoomAttributesOperated(errorCode, errorMessage, errorKeys);
                 }
@@ -170,11 +172,15 @@ public class SeatService {
 
 
     public void removeUserFromSeat(int seatIndex, ZegoUIKitSignalingPluginRoomAttributesOperatedCallback callback) {
+        Timber.d("removeUserFromSeat() called with: seatIndex = [" + seatIndex + "], callback = [" + callback + "]");
         if (ZegoUIKit.getLocalUser() == null) {
             return;
         }
         List<String> list = Collections.singletonList(String.valueOf(seatIndex));
         ZegoUIKit.getSignalingPlugin().deleteRoomProperties(list, true, (errorCode, errorMessage, errorKeys) -> {
+            Timber.d(
+                "removeUserFromSeat() result with: seatIndex = [" + seatIndex + "], errorMessage = [" + errorMessage
+                    + "]");
             if (callback != null) {
                 callback.onSignalingPluginRoomAttributesOperated(errorCode, errorMessage, errorKeys);
             }

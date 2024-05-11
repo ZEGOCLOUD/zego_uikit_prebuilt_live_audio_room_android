@@ -30,14 +30,17 @@ public class ZegoUIKitPrebuiltLiveAudioRoomConfig {
             ZegoMenuBarButtonName.CLOSE_SEAT_BUTTON)), new ArrayList<>(
         Arrays.asList(ZegoMenuBarButtonName.TOGGLE_MICROPHONE_BUTTON, ZegoMenuBarButtonName.SHOW_MEMBER_LIST_BUTTON)),
         new ArrayList<>(Collections.singletonList(ZegoMenuBarButtonName.APPLY_TO_TAKE_SEAT_BUTTON)));
-    public ZegoDialogInfo confirmDialogInfo;
-
 
     /**
-     * @deprecated use {@link ZegoUIKitPrebuiltLiveAudioRoomConfig#innerText} instead
+     * if confirmDialogInfo is not null,a confirm dialog will show when exit button was clicked or back button is pressed.
+     * please use {@link ZegoTranslationText#leaveRoomConfirmDialogInfo }  to custom dialog
+     * texts.
      */
     @Deprecated
+    public ZegoDialogInfo confirmDialogInfo;
+
     public ZegoTranslationText translationText = new ZegoTranslationText();
+
     public ZegoInnerText innerText = new ZegoInnerText();
     public ZegoLiveAudioRoomLayoutConfig layoutConfig = new ZegoLiveAudioRoomLayoutConfig();
     public ZegoLiveAudioRoomSeatConfig seatConfig = new ZegoLiveAudioRoomSeatConfig();
@@ -53,8 +56,7 @@ public class ZegoUIKitPrebuiltLiveAudioRoomConfig {
         config.role = ZegoLiveAudioRoomRole.HOST;
         config.takeSeatIndexWhenJoining = 0;
         config.turnOnMicrophoneWhenJoining = true;
-        config.confirmDialogInfo = new ZegoDialogInfo("Leave the room", "Are you sure to leave the room?", "Cancel",
-            "OK");
+        config.confirmDialogInfo = new ZegoDialogInfo();
         return config;
     }
 

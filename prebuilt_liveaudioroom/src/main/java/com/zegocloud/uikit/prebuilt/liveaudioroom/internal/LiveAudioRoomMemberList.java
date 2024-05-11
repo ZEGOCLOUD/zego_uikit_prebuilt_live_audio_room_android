@@ -26,8 +26,8 @@ import com.zegocloud.uikit.components.memberlist.ZegoMemberList;
 import com.zegocloud.uikit.components.memberlist.ZegoMemberListComparator;
 import com.zegocloud.uikit.components.memberlist.ZegoMemberListItemViewProvider;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.R;
-import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoInnerText;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoMemberListConfig;
+import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoTranslationText;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.databinding.LiveaudioroomLayoutMemberlistBinding;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.service.InvitationService;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.service.LiveAudioRoomInvitation;
@@ -85,7 +85,7 @@ public class LiveAudioRoomMemberList extends BottomSheetDialog {
         setCanceledOnTouchOutside(true);
         window.setBackgroundDrawable(new ColorDrawable());
 
-        ZegoInnerText translationText = LiveAudioRoomManager.getInstance().getInnerText();
+        ZegoTranslationText translationText = LiveAudioRoomManager.getInstance().getTranslationText();
         if (translationText != null && translationText.memberListTitle != null) {
             liveMemberListTitle.setText(translationText.memberListTitle);
         }
@@ -184,24 +184,34 @@ public class LiveAudioRoomMemberList extends BottomSheetDialog {
                     boolean isUserHost = LiveAudioRoomManager.getInstance().roleService.isUserHost(uiKitUser.userID);
                     boolean isUserSpeaker = LiveAudioRoomManager.getInstance().roleService.isUserSpeaker(
                         uiKitUser.userID);
+                    ZegoTranslationText translationText = LiveAudioRoomManager.getInstance().getTranslationText();
+
                     StringBuilder builder = new StringBuilder();
                     if (isYou || isUserHost || isUserSpeaker) {
                         builder.append("(");
                     }
                     if (isYou) {
-                        builder.append(getContext().getString(R.string.liveaudioroom_you));
+                        if (translationText != null) {
+                            builder.append(translationText.you);
+                        } else {
+
+                        }
                     }
                     if (isUserHost) {
                         if (isYou) {
                             builder.append(",");
                         }
-                        builder.append(getContext().getString(R.string.liveaudioroom_host));
+                        if (translationText != null) {
+                            builder.append(translationText.host);
+                        }
                     } else {
                         if (isUserSpeaker) {
                             if (isYou) {
                                 builder.append(",");
                             }
-                            builder.append(getContext().getString(R.string.liveaudioroom_speaker));
+                            if (translationText != null) {
+                                builder.append(translationText.speaker);
+                            }
                         }
                     }
 
@@ -246,7 +256,6 @@ public class LiveAudioRoomMemberList extends BottomSheetDialog {
                         disagree.setVisibility(View.GONE);
                     }
 
-                    ZegoInnerText translationText = LiveAudioRoomManager.getInstance().getInnerText();
                     if (translationText != null) {
                         agree.setText(translationText.memberListAgreeButton);
                         disagree.setText(translationText.memberListDisagreeButton);
@@ -315,14 +324,12 @@ public class LiveAudioRoomMemberList extends BottomSheetDialog {
 
     private void showMoreOperationDialog(ZegoUIKitUser uiKitUser) {
         List<String> stringList = new ArrayList<>();
-        ZegoInnerText translationText = LiveAudioRoomManager.getInstance().getInnerText();
+        ZegoTranslationText translationText = LiveAudioRoomManager.getInstance().getTranslationText();
         if (translationText != null && translationText.inviteToTakeSeatMenuDialogButton != null) {
             stringList.add(String.format(translationText.inviteToTakeSeatMenuDialogButton, uiKitUser.userName));
         }
         if (translationText != null && translationText.cancelMenuDialogButton != null) {
             stringList.add(translationText.cancelMenuDialogButton);
-        } else {
-            stringList.add(getContext().getString(R.string.liveaudioroom_cancel));
         }
 
         moreOperationDialog = new BottomActionDialog(getContext(), stringList);
@@ -331,7 +338,7 @@ public class LiveAudioRoomMemberList extends BottomSheetDialog {
             if (which == 0) {
                 LiveAudioRoomInvitation myInvitation = LiveAudioRoomManager.getInstance().invitationService.getInvitation(
                     ZegoUIKit.getLocalUser().userID, uiKitUser.userID);
-                if (myInvitation != null && !myInvitation.isFinished() && myInvitation.isTakeSeatInvite() ) {
+                if (myInvitation != null && !myInvitation.isFinished() && myInvitation.isTakeSeatInvite()) {
                 } else {
                     LiveAudioRoomManager.getInstance().invitationService.sendInvitation(
                         Collections.singletonList(uiKitUser.userID), 60,
