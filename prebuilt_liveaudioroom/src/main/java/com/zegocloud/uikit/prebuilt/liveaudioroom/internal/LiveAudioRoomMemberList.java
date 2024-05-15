@@ -241,7 +241,11 @@ public class LiveAudioRoomMemberList extends BottomSheetDialog {
                                 } else {
                                     agree.setVisibility(View.GONE);
                                     disagree.setVisibility(View.GONE);
-                                    more.setVisibility(View.VISIBLE);
+                                    if(isUserSpeaker){
+                                        more.setVisibility(View.GONE);
+                                    }else {
+                                        more.setVisibility(View.VISIBLE);
+                                    }
                                 }
                             }
                         } else {

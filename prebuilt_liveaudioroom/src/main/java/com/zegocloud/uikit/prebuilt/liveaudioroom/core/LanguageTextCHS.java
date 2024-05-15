@@ -8,7 +8,7 @@ public class LanguageTextCHS extends LanguageBaseText {
         takeSeatMenuDialogButton = "上麦";
         leaveSeatMenuDialogButton = "下麦";
         cancelMenuDialogButton = "取消";
-        memberListTitle = "观众";
+        memberListTitle = "听众";
         removeSpeakerFailedToast = "无法将 %s 移下麦位";
         applyToTakeSeatButton = "申请上麦";
         cancelTheTakeSeatApplicationButton = "取消";
