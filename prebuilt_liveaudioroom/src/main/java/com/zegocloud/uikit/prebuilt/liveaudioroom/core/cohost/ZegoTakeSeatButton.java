@@ -6,12 +6,14 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.zegocloud.uikit.ZegoUIKit;
+import com.zegocloud.uikit.plugin.common.PluginCallbackListener;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.service.LiveAudioRoomInvitation;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.service.LiveAudioRoomInvitationType;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.service.LiveAudioRoomManager;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.service.OutgoingInvitationListener;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 import java.util.List;
+import java.util.Map;
 
 public class ZegoTakeSeatButton extends FrameLayout {
 
@@ -38,6 +40,16 @@ public class ZegoTakeSeatButton extends FrameLayout {
         addView(requestCoHostButton);
         cancelRequestCoHostButton = new ZegoCancelRequestCoHostButton(getContext());
         addView(cancelRequestCoHostButton);
+
+        cancelRequestCoHostButton.setRequestCallbackListener(new PluginCallbackListener() {
+            @Override
+            public void callback(Map<String, Object> result) {
+                int code = (int) result.get("code");
+                if (code == -999) {
+                    showRequestButton();
+                }
+            }
+        });
 
         showRequestButton();
 

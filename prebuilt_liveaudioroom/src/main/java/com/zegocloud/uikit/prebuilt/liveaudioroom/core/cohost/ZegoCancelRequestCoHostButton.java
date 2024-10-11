@@ -12,11 +12,11 @@ import com.zegocloud.uikit.ZegoUIKit;
 import com.zegocloud.uikit.plugin.common.PluginCallbackListener;
 import com.zegocloud.uikit.plugin.invitation.components.ZegoCancelInvitationButton;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.R;
-import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoInnerText;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoTranslationText;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.internal.service.LiveAudioRoomManager;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 import com.zegocloud.uikit.utils.Utils;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ZegoCancelRequestCoHostButton extends ZegoCancelInvitationButton {
@@ -53,6 +53,11 @@ public class ZegoCancelRequestCoHostButton extends ZegoCancelInvitationButton {
         String hostUserID = LiveAudioRoomManager.getInstance().roleService.getHostUserID();
         ZegoUIKitUser hostUser = ZegoUIKit.getUser(hostUserID);
         if (TextUtils.isEmpty(hostUserID) || hostUser == null) {
+            if (callbackListener != null) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("code", -999);
+                callbackListener.callback(map);
+            }
             return;
         }
         if (!invitees.contains(hostUserID)) {

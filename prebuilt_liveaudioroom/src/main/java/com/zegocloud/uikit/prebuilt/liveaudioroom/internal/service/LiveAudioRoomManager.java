@@ -25,6 +25,7 @@ public class LiveAudioRoomManager {
     private ZegoUIKitSignalingPluginRoomPropertyUpdateListener signalRoomPropertyListener;
     private ZegoRoomPropertyUpdateListener rtcRoomPropertyUpdateListener;
     private ZegoUIKitSignalingPluginUsersInRoomAttributesUpdateListener signalUsersInRoomAttributesListener;
+    private ZegoUIKitSignalingPluginInvitationListener invitationListener;
 
     private LiveAudioRoomManager() {
     }
@@ -56,9 +57,11 @@ public class LiveAudioRoomManager {
         return prebuiltLiveAudioRoomConfig;
     }
 
+    private static final String TAG = "LiveAudioRoomManager";
+
     public void init(Application application, long appID, String appSign) {
         ZegoUIKit.init(application, appID, appSign, ZegoScenario.GENERAL);
-        ZegoUIKit.getSignalingPlugin().addInvitationListener(new ZegoUIKitSignalingPluginInvitationListener() {
+        invitationListener = new ZegoUIKitSignalingPluginInvitationListener() {
 
             @Override
             public void onInvitationReceived(ZegoUIKitUser inviter, int type, String data) {
@@ -89,7 +92,7 @@ public class LiveAudioRoomManager {
             public void onInvitationCanceled(ZegoUIKitUser inviter, String data) {
                 invitationService.onInvitationCanceled(inviter, data);
             }
-        });
+        };
     }
 
     public void loginUser(String userID, String userName) {
@@ -161,6 +164,7 @@ public class LiveAudioRoomManager {
             }
         };
         ZegoUIKit.addUserUpdateListener(rtcUserUpdateListener);
+        ZegoUIKit.getSignalingPlugin().addInvitationListener(invitationListener);
         ZegoUIKit.joinRoom(roomID, new ZegoUIKitCallback() {
             @Override
             public void onResult(int errorCode) {
@@ -204,6 +208,7 @@ public class LiveAudioRoomManager {
     }
 
     public void leaveRoom() {
+        ZegoUIKit.getSignalingPlugin().removeInvitationListener(invitationListener);
         seatService.leaveRoom();
         roleService.leaveRoom();
         invitationService.leaveRoom();
