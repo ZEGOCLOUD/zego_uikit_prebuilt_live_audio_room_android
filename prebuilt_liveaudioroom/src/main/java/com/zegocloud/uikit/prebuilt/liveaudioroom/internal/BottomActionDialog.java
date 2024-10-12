@@ -46,6 +46,7 @@ public class BottomActionDialog extends Dialog {
             TextView button = new TextView(getContext());
             button.setText(stringList.get(i));
             button.setTextSize(14);
+            button.setTextColor(getContext().getColor(R.color.color_2a2a2a));
             button.setGravity(Gravity.CENTER);
             childParent.addView(button, new LinearLayout.LayoutParams(-1, cellHeight));
             final int index = i;
