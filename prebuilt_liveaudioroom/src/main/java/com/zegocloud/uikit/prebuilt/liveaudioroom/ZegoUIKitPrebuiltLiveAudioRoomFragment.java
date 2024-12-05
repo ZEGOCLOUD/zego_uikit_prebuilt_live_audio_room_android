@@ -76,7 +76,7 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
     private LiveAudioRoomViewModel liveAudioRoomViewModel;
     private ConfirmDialog receiveTakeSeatInviteDialog;
 
-    private ZegoUIKitPrebuiltLiveAudioRoomFragment() {
+    public ZegoUIKitPrebuiltLiveAudioRoomFragment() {
         // Required empty public constructor
     }
 
@@ -365,7 +365,7 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
                                         }
                                         dialog.dismiss();
                                     }).setNegativeButton(dialogInfo.cancelButtonName, (dialog, which) -> {
-                                        invitationService.refuseInvitation(inviter, null);
+                                        invitationService.refuseInvitation(inviter, "", null);
                                         dialog.dismiss();
                                     }).build();
                                 receiveTakeSeatInviteDialog.show();
@@ -809,7 +809,7 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
 
     public void rejectSeatTakingRequest(String audienceUserID) {
         InvitationService invitationService = LiveAudioRoomManager.getInstance().invitationService;
-        invitationService.refuseInvitation(ZegoUIKit.getUser(audienceUserID), new PluginCallbackListener() {
+        invitationService.refuseInvitation(ZegoUIKit.getUser(audienceUserID), "", new PluginCallbackListener() {
             @Override
             public void callback(Map<String, Object> result) {
 

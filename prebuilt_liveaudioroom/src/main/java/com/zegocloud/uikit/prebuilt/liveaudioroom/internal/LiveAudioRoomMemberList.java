@@ -270,7 +270,7 @@ public class LiveAudioRoomMemberList extends BottomSheetDialog {
                         dismiss();
                     });
                     disagree.setOnClickListener(v -> {
-                        invitationService.refuseInvitation(uiKitUser, null);
+                        invitationService.refuseInvitation(uiKitUser, "", null);
                         dismiss();
                     });
                     more.setOnClickListener(v -> {

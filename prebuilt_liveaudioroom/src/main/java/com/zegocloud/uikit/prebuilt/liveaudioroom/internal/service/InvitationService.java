@@ -238,12 +238,12 @@ public class InvitationService {
         });
     }
 
-    public void refuseInvitation(ZegoUIKitUser inviter, PluginCallbackListener callbackListener) {
+    public void refuseInvitation(ZegoUIKitUser inviter, String reason, PluginCallbackListener callbackListener) {
         if (ZegoUIKit.getLocalUser() == null) {
             return;
         }
         String myUserID = ZegoUIKit.getLocalUser().userID;
-        ZegoUIKit.getSignalingPlugin().refuseInvitation(inviter.userID, "", new PluginCallbackListener() {
+        ZegoUIKit.getSignalingPlugin().refuseInvitation(inviter.userID, reason, new PluginCallbackListener() {
             @Override
             public void callback(Map<String, Object> result) {
                 int code = (int) result.get("code");
@@ -314,11 +314,11 @@ public class InvitationService {
         }
     }
 
-    public void refuseAllRequest() {
+    public void refuseAllRequest(String reason) {
         for (LiveAudioRoomInvitation audioRoomInvitation : zegoInvitationMap.values()) {
             if (ZegoUIKit.getLocalUser().userID.equals(audioRoomInvitation.invitee)) {
                 if (!audioRoomInvitation.isFinished()) {
-                    refuseInvitation(ZegoUIKit.getUser(audioRoomInvitation.inviter), null);
+                    refuseInvitation(ZegoUIKit.getUser(audioRoomInvitation.inviter), reason,null);
                 }
             }
         }

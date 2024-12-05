@@ -248,7 +248,7 @@ public class SeatService {
         } else {
             ZegoUIKit.setRoomProperty("lockseat", "0");
             InvitationService invitationService = LiveAudioRoomManager.getInstance().invitationService;
-            invitationService.refuseAllRequest();
+            invitationService.refuseAllRequest("lockseat");
             invitationService.cancelMyInvitations();
         }
     }
