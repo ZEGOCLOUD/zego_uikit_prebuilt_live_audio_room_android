@@ -456,7 +456,7 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
                         ZegoUIKit.getLocalUser().userID, invitee.userID);
                     if (invitation != null && invitation.isTakeSeatRequest()) {
                         if (getListenerInfo().audienceListener != null) {
-                            getListenerInfo().audienceListener.onSeatTakingRequestRejected();
+                            getListenerInfo().audienceListener.onSeatTakingRequestRejected(invitee, extendedData);
                         }
                     } else if (invitation != null && invitation.isTakeSeatInvite()) {
                         if (getListenerInfo().hostListener != null) {
