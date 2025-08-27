@@ -1,16 +1,18 @@
 package com.zegocloud.uikit.prebuilt.liveaudioroom;
 
 
+import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoPlayStreamBufferIntervalRange;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoBottomMenuBarConfig;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoDialogInfo;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoInRoomMessageViewConfig;
+import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoInnerText;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoLiveAudioRoomLayoutConfig;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoLiveAudioRoomRole;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoLiveAudioRoomSeatConfig;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoMenuBarButtonName;
-import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoInnerText;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoTranslationText;
 import com.zegocloud.uikit.service.defines.ZegoMeRemovedFromRoomListener;
+import im.zego.zegoexpress.entity.ZegoAudioConfig;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -32,9 +34,8 @@ public class ZegoUIKitPrebuiltLiveAudioRoomConfig {
         new ArrayList<>(Collections.singletonList(ZegoMenuBarButtonName.APPLY_TO_TAKE_SEAT_BUTTON)));
 
     /**
-     * if confirmDialogInfo is not null,a confirm dialog will show when exit button was clicked or back button is pressed.
-     * please use {@link ZegoTranslationText#leaveRoomConfirmDialogInfo }  to custom dialog
-     * texts.
+     * if confirmDialogInfo is not null,a confirm dialog will show when exit button was clicked or back button is
+     * pressed. please use {@link ZegoTranslationText#leaveRoomConfirmDialogInfo }  to custom dialog texts.
      */
     @Deprecated
     public ZegoDialogInfo confirmDialogInfo;
@@ -50,6 +51,8 @@ public class ZegoUIKitPrebuiltLiveAudioRoomConfig {
     public Map<String, String> userInRoomAttributes;
     public boolean closeSeatsWhenJoin = true;
     public transient ZegoMeRemovedFromRoomListener removedFromRoomListener;
+    public ZegoAudioConfig audioConfig;
+    public ZegoPlayStreamBufferIntervalRange playStreamBufferIntervalRange;
 
     public static ZegoUIKitPrebuiltLiveAudioRoomConfig host() {
         ZegoUIKitPrebuiltLiveAudioRoomConfig config = new ZegoUIKitPrebuiltLiveAudioRoomConfig();

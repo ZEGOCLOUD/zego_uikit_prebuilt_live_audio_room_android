@@ -48,6 +48,7 @@ import com.zegocloud.uikit.service.defines.ZegoUIKitPluginCallback;
 import com.zegocloud.uikit.service.defines.ZegoUIKitSignalingPluginRoomAttributesOperatedCallback;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 import com.zegocloud.uikit.service.defines.ZegoUserCountOrPropertyChangedListener;
+import im.zego.zegoexpress.constants.ZegoPublishChannel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -160,6 +161,12 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
         String userID = getArguments().getString("userID");
         String userName = getArguments().getString("userName");
         String roomID = getArguments().getString("roomID");
+
+        ZegoUIKitPrebuiltLiveAudioRoomConfig prebuiltConfig = LiveAudioRoomManager.getInstance().getPrebuiltConfig();
+        if (prebuiltConfig != null && prebuiltConfig.audioConfig != null) {
+            ZegoUIKit.setAudioConfig(prebuiltConfig.audioConfig, ZegoPublishChannel.MAIN);
+        }
+
         LiveAudioRoomManager.getInstance().joinRoom(userID, userName, roomID, new JoinRoomCallback() {
             @Override
             public void onJoinRoomSuccess() {
@@ -194,6 +201,12 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
         LiveAudioRoomManager.getInstance().roleService.queryUserInRoomAttribute();
 
         ZegoUIKitPrebuiltLiveAudioRoomConfig config = LiveAudioRoomManager.getInstance().getPrebuiltConfig();
+
+        if (config != null && config.playStreamBufferIntervalRange != null) {
+            ZegoUIKit.setPlayStreamBufferIntervalRange(config.playStreamBufferIntervalRange.minBufferInterval,
+                config.playStreamBufferIntervalRange.maxBufferInterval);
+        }
+
         String selfUserID = getArguments().getString("userID");
         if (!TextUtils.isEmpty(config.userAvatarUrl)) {
             ZegoUIKit.getSignalingPlugin()
