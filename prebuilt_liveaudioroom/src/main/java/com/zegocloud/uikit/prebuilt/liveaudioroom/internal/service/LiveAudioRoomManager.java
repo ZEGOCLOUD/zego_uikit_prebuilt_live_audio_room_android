@@ -110,7 +110,6 @@ public class LiveAudioRoomManager {
     }
 
     public void joinRoom(String userID, String userName, String roomID, JoinRoomCallback callback) {
-        ZegoUIKit.setAudioVideoResourceMode(ZegoAudioVideoResourceMode.RTC_ONLY);
         signalRoomPropertyListener = new ZegoUIKitSignalingPluginRoomPropertyUpdateListener() {
             @Override
             public void onRoomPropertyUpdated(String key, String oldValue, String newValue) {

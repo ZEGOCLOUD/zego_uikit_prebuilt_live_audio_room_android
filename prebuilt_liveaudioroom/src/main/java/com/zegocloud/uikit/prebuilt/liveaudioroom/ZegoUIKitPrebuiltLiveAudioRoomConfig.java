@@ -11,6 +11,7 @@ import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoLiveAudioRoomRole;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoLiveAudioRoomSeatConfig;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoMenuBarButtonName;
 import com.zegocloud.uikit.prebuilt.liveaudioroom.core.ZegoTranslationText;
+import com.zegocloud.uikit.service.defines.ZegoAudioVideoResourceMode;
 import com.zegocloud.uikit.service.defines.ZegoMeRemovedFromRoomListener;
 import im.zego.zegoexpress.entity.ZegoAudioConfig;
 import java.util.ArrayList;
@@ -53,6 +54,7 @@ public class ZegoUIKitPrebuiltLiveAudioRoomConfig {
     public transient ZegoMeRemovedFromRoomListener removedFromRoomListener;
     public ZegoAudioConfig audioConfig;
     public ZegoPlayStreamBufferIntervalRange playStreamBufferIntervalRange;
+    public ZegoAudioVideoResourceMode avResourceMode = ZegoAudioVideoResourceMode.RTC_ONLY;
 
     public static ZegoUIKitPrebuiltLiveAudioRoomConfig host() {
         ZegoUIKitPrebuiltLiveAudioRoomConfig config = new ZegoUIKitPrebuiltLiveAudioRoomConfig();

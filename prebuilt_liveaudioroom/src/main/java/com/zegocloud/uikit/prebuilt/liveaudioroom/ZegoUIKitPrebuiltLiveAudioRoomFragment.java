@@ -166,6 +166,9 @@ public class ZegoUIKitPrebuiltLiveAudioRoomFragment extends Fragment {
         if (prebuiltConfig != null && prebuiltConfig.audioConfig != null) {
             ZegoUIKit.setAudioConfig(prebuiltConfig.audioConfig, ZegoPublishChannel.MAIN);
         }
+        if (prebuiltConfig != null && prebuiltConfig.avResourceMode != null) {
+            ZegoUIKit.setAudioVideoResourceMode(prebuiltConfig.avResourceMode);
+        }
 
         LiveAudioRoomManager.getInstance().joinRoom(userID, userName, roomID, new JoinRoomCallback() {
             @Override
